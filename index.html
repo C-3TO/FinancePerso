@@ -71,8 +71,9 @@ input, select { font-size: 16px !important; }
 .auth-form.active { display: flex; }
 .auth-form .form-group { display: flex; flex-direction: column; gap: 6px; }
 .auth-form label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-.auth-form input { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 16px !important; width: 100%; }
-.auth-form input:focus { outline: none; border-color: var(--accent); }
+.auth-form input, .auth-form textarea { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 16px !important; width: 100%; }
+.auth-form textarea { min-height: 100px; resize: vertical; font-family: var(--font-mono); font-size: 12px !important; }
+.auth-form input:focus, .auth-form textarea:focus { outline: none; border-color: var(--accent); }
 .auth-form .btn-primary { margin-top: 8px; padding: 16px; font-size: 16px; width: 100%; }
 .auth-info { background: var(--bg-tertiary); border-radius: var(--radius-md); padding: 12px; font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
 .auth-info strong { color: var(--text-primary); }
@@ -81,9 +82,6 @@ input, select { font-size: 16px !important; }
 .strength-weak { width: 33%; background: var(--red); }
 .strength-medium { width: 66%; background: var(--orange); }
 .strength-strong { width: 100%; background: var(--green); }
-.link-code-box { background: var(--bg-primary); border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 20px; text-align: center; margin: 16px 0; }
-.link-code { font-family: var(--font-mono); font-size: clamp(14px, 4vw, 18px); font-weight: 600; color: var(--accent); letter-spacing: 1px; word-break: break-all; }
-.link-code-hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
 .auth-error { background: var(--red-dim); border: 1px solid var(--red); color: var(--red); padding: 12px; border-radius: var(--radius-md); font-size: 13px; display: none; }
 .auth-error.show { display: block; }
 
@@ -100,8 +98,7 @@ input, select { font-size: 16px !important; }
 .logo-text { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
 .user-info { padding: 16px 24px; border-bottom: 1px solid var(--border); }
 .user-name { font-size: 14px; font-weight: 600; }
-.user-sync { font-size: 12px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
-.user-sync.synced { color: var(--green); }
+.user-sync { font-size: 12px; color: var(--green); margin-top: 2px; }
 .nav-links { list-style: none; padding: 12px; flex: 1; overflow-y: auto; }
 .nav-link { display: flex; align-items: center; gap: 12px; padding: 14px 16px; color: var(--text-secondary); text-decoration: none; border-radius: var(--radius-md); transition: all 0.2s; margin-bottom: 4px; font-size: 14px; font-weight: 500; }
 .nav-link:hover { background: var(--bg-hover); color: var(--text-primary); }
@@ -115,7 +112,6 @@ input, select { font-size: 16px !important; }
 .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--bg-secondary); border-bottom: 1px solid var(--border); align-items: center; padding: 0 16px; padding-top: var(--safe-top); z-index: 90; }
 .menu-toggle { background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; padding: 8px; margin-left: -8px; }
 .mobile-title { flex: 1; text-align: center; font-weight: 600; font-size: 17px; }
-.mobile-sync { font-size: 18px; padding: 8px; margin-right: -8px; }
 
 /* MAIN CONTENT */
 .main-content { flex: 1; margin-left: var(--sidebar-width); padding: 32px; min-height: 100vh; min-height: 100dvh; }
@@ -187,7 +183,6 @@ input, select { font-size: 16px !important; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border); padding: 12px 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-secondary:hover { background: var(--bg-hover); border-color: var(--border-light); }
-.btn-secondary:active { transform: scale(0.98); }
 .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); padding: 12px 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .btn-danger:hover { background: var(--red); color: white; }
 .btn-icon { background: var(--bg-tertiary); border: none; width: 36px; height: 36px; border-radius: var(--radius-sm); color: var(--text-secondary); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -254,8 +249,9 @@ input, select { font-size: 16px !important; }
 .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; flex: 1; }
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-group label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-.form-group input, .form-group select { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 16px !important; width: 100%; }
-.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+.form-group input, .form-group select, .form-group textarea { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 16px; color: var(--text-primary); font-size: 16px !important; width: 100%; }
+.form-group textarea { min-height: 80px; resize: vertical; font-family: var(--font-mono); font-size: 11px !important; word-break: break-all; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--accent); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
 .modal-footer button { flex: 1; }
@@ -269,10 +265,8 @@ input, select { font-size: 16px !important; }
 .settings-row > div:first-child { flex: 1; min-width: 0; }
 .settings-row label { font-size: 14px; font-weight: 500; display: block; }
 .settings-row select, .settings-row input[type="number"] { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px; color: var(--text-primary); font-size: 14px; min-width: 140px; }
-.settings-row select:focus, .settings-row input:focus { outline: none; border-color: var(--accent); }
 .settings-hint { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .settings-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
-.settings-about { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
 .account-box { background: var(--bg-tertiary); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; }
 .account-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px; border-bottom: 1px solid var(--border); }
 .account-row:last-child { border-bottom: none; }
@@ -286,11 +280,11 @@ input, select { font-size: 16px !important; }
 .toggle-switch input:checked + .toggle-slider:before { transform: translateX(22px); background: white; }
 .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
 .tag { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--bg-tertiary); border-radius: 20px; font-size: 13px; }
-.tag-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0; line-height: 1; margin-left: 2px; }
+.tag-remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0; line-height: 1; }
 .tag-remove:hover { color: var(--red); }
 .add-tag-row { display: flex; gap: 8px; }
 .add-tag-row input { flex: 1; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 12px; color: var(--text-primary); font-size: 14px; min-width: 0; }
-.add-tag-row button { padding: 10px 16px; white-space: nowrap; }
+.add-tag-row button { padding: 10px 16px; }
 
 /* TOAST */
 .toast { position: fixed; bottom: calc(24px + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 24px; font-size: 14px; font-weight: 500; z-index: 2000; opacity: 0; transition: all 0.3s; white-space: nowrap; }
@@ -318,34 +312,27 @@ input, select { font-size: 16px !important; }
     .period-selector select { flex: 1; }
     .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
     .stat-card { padding: 14px; }
-    .stat-label { font-size: 11px; margin-bottom: 4px; }
+    .stat-label { font-size: 11px; }
     .stat-value { font-size: 20px; }
-    .stat-detail { font-size: 11px; }
     .charts-grid { gap: 12px; }
     .chart-card { padding: 16px; }
     .chart-container { height: 180px; }
     .bottom-grid { grid-template-columns: 1fr; gap: 12px; }
     .bottom-grid .card:last-child { grid-column: span 1; }
-    .card { padding: 16px; }
     .filters { flex-direction: column; gap: 10px; }
     .filters select { width: 100%; }
     .list-item { padding: 14px; }
     .list-item-icon { width: 40px; height: 40px; font-size: 18px; }
-    .list-item-title { font-size: 14px; }
-    .list-item-amount { font-size: 14px; }
-    .list-item-actions { gap: 4px; }
     .btn-icon { width: 34px; height: 34px; }
     .abonnements-summary { flex-direction: column; gap: 12px; padding: 16px; }
     .epargne-total { flex-direction: column; text-align: center; padding: 20px; }
     .epargne-grid { grid-template-columns: 1fr; }
-    .epargne-card { padding: 16px; }
-    .modal { max-height: calc(100vh - 20px); max-height: calc(100dvh - 20px); border-radius: var(--radius-lg) var(--radius-lg) 0 0; margin-top: auto; }
+    .modal { max-height: calc(100vh - 20px); border-radius: var(--radius-lg) var(--radius-lg) 0 0; margin-top: auto; }
     .modal-body { padding: 16px; }
     .modal-footer { padding: 16px; padding-bottom: calc(16px + var(--safe-bottom)); }
     .form-row { grid-template-columns: 1fr; }
-    .settings-card { padding: 16px; }
-    .settings-row { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 0; }
-    .settings-row select, .settings-row input[type="number"] { width: 100%; min-width: auto; }
+    .settings-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .settings-row select, .settings-row input[type="number"] { width: 100%; }
     .settings-actions { flex-direction: column; }
     .settings-actions button { width: 100%; }
     .add-tag-row { flex-direction: column; }
@@ -369,62 +356,58 @@ input, select { font-size: 16px !important; }
                 <p>Gérez vos finances simplement</p>
             </div>
             <div class="auth-tabs" id="authTabs">
-                <button class="auth-tab active" onclick="showAuthTab('login')">Connexion</button>
-                <button class="auth-tab" onclick="showAuthTab('register')">Inscription</button>
+                <button class="auth-tab active" onclick="showTab('login')">Connexion</button>
+                <button class="auth-tab" onclick="showTab('register')">Inscription</button>
             </div>
             
             <div class="auth-error" id="authError"></div>
             
             <!-- LOGIN -->
-            <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+            <form class="auth-form active" id="loginForm" onsubmit="doLogin(event)">
                 <div class="form-group">
                     <label>Identifiant</label>
-                    <input type="text" id="loginUser" placeholder="Votre identifiant" required autocomplete="username">
+                    <input type="text" id="loginUser" placeholder="Votre identifiant" required>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" id="loginPwd" placeholder="••••••••" required autocomplete="current-password">
+                    <input type="password" id="loginPwd" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn-primary" id="loginBtn">Se connecter</button>
+                <button type="submit" class="btn-primary">Se connecter</button>
                 <div class="auth-info">
                     💡 <strong>Nouvel appareil ?</strong><br>
-                    <button type="button" onclick="showAuthTab('link')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;margin-top:8px;padding:0">→ Lier cet appareil à mon compte</button>
+                    <button type="button" onclick="showTab('import')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;margin-top:8px;padding:0">→ Importer mes données</button>
                 </div>
             </form>
             
             <!-- REGISTER -->
-            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+            <form class="auth-form" id="registerForm" onsubmit="doRegister(event)">
                 <div class="form-group">
                     <label>Identifiant</label>
-                    <input type="text" id="regUser" placeholder="Choisissez un identifiant" required minlength="3" autocomplete="username">
+                    <input type="text" id="regUser" placeholder="Choisissez un identifiant" required minlength="3">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <input type="password" id="regPwd" placeholder="Minimum 6 caractères" required minlength="6" autocomplete="new-password" oninput="checkStrength(this.value)">
+                    <input type="password" id="regPwd" placeholder="Minimum 6 caractères" required minlength="6" oninput="checkStrength(this.value)">
                     <div class="password-strength"><div class="password-strength-bar" id="strengthBar"></div></div>
                 </div>
                 <div class="form-group">
                     <label>Confirmer</label>
-                    <input type="password" id="regPwdConfirm" placeholder="••••••••" required autocomplete="new-password">
+                    <input type="password" id="regPwdC" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="btn-primary" id="regBtn">Créer mon compte</button>
+                <button type="submit" class="btn-primary">Créer mon compte</button>
             </form>
             
-            <!-- LINK DEVICE -->
-            <form class="auth-form" id="linkForm" onsubmit="handleLink(event)">
-                <div class="auth-info" style="margin-bottom:16px">
-                    📱 Sur votre appareil principal, allez dans <strong>Réglages → Lier un appareil</strong> pour obtenir le code.
+            <!-- IMPORT -->
+            <form class="auth-form" id="importForm" onsubmit="doImport(event)">
+                <div class="auth-info" style="margin-bottom:8px">
+                    📱 Collez ici le code de transfert généré depuis l'autre appareil (Réglages → Exporter pour transfert)
                 </div>
                 <div class="form-group">
-                    <label>Code de liaison</label>
-                    <input type="text" id="linkCode" placeholder="Collez le code ici" required>
+                    <label>Code de transfert</label>
+                    <textarea id="importCode" placeholder="Collez le code ici..." required></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Mot de passe du compte</label>
-                    <input type="password" id="linkPwd" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="btn-primary" id="linkBtn">Lier cet appareil</button>
-                <button type="button" class="btn-secondary" onclick="showAuthTab('login')" style="margin-top:8px;width:100%">← Retour</button>
+                <button type="submit" class="btn-primary">Importer</button>
+                <button type="button" class="btn-secondary" onclick="showTab('login')" style="margin-top:8px;width:100%">← Retour</button>
             </form>
         </div>
     </div>
@@ -435,8 +418,8 @@ input, select { font-size: 16px !important; }
         <nav class="sidebar" id="sidebar">
             <div class="logo"><span class="logo-icon">◉</span><span class="logo-text">Thé.OS Finance</span></div>
             <div class="user-info">
-                <div class="user-name" id="displayUserName">Utilisateur</div>
-                <div class="user-sync" id="syncStatus">⟳ Synchronisation...</div>
+                <div class="user-name" id="userName">Utilisateur</div>
+                <div class="user-sync">✓ Local</div>
             </div>
             <ul class="nav-links">
                 <li><a href="#" class="nav-link active" data-section="dashboard"><span class="nav-icon">◫</span> Dashboard</a></li>
@@ -454,7 +437,7 @@ input, select { font-size: 16px !important; }
         <header class="mobile-header">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
             <span class="mobile-title">Thé.OS Finance</span>
-            <button class="menu-toggle mobile-sync" onclick="manualSync()">↻</button>
+            <span style="width:40px"></span>
         </header>
         
         <main class="main-content">
@@ -524,11 +507,9 @@ input, select { font-size: 16px !important; }
                     <div class="account-box">
                         <div class="account-row"><span class="account-label">Identifiant</span><span class="account-value" id="accU">—</span></div>
                         <div class="account-row"><span class="account-label">Créé le</span><span class="account-value" id="accC">—</span></div>
-                        <div class="account-row"><span class="account-label">Dernière sync</span><span class="account-value" id="accS">—</span></div>
                     </div>
                     <div class="settings-actions">
-                        <button class="btn-secondary" onclick="showLinkModal()">📱 Lier un appareil</button>
-                        <button class="btn-secondary" onclick="manualSync()">↻ Synchroniser</button>
+                        <button class="btn-secondary" onclick="exportTransfer()">📱 Exporter pour transfert</button>
                     </div>
                 </div>
 
@@ -561,7 +542,7 @@ input, select { font-size: 16px !important; }
                     <h3>💾 Données</h3>
                     <div class="settings-row"><div><label>Export JSON</label></div><button class="btn-secondary" onclick="expJSON()">Télécharger</button></div>
                     <div class="settings-row"><div><label>Export Excel</label></div><button class="btn-secondary" onclick="expXLS()">Télécharger</button></div>
-                    <div class="settings-row"><div><label>Importer</label></div><button class="btn-secondary" onclick="document.getElementById('impF').click()">Importer</button><input type="file" id="impF" accept=".json" style="display:none" onchange="impJSON(event)"></div>
+                    <div class="settings-row"><div><label>Importer JSON</label></div><button class="btn-secondary" onclick="document.getElementById('impF').click()">Importer</button><input type="file" id="impF" accept=".json" style="display:none" onchange="impJSON(event)"></div>
                 </div>
 
                 <div class="settings-card danger">
@@ -589,13 +570,13 @@ input, select { font-size: 16px !important; }
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <script>
-// === GLOBALS ===
+// === DATA ===
 let data = { revenus:[], depenses:[], abonnements:[], epargne:[], mouvements:[], categories:{ revenus:['Salaire','Freelance','YouTube','Autre'], depenses:['Alimentation','Transport','Logement','Loisirs','Shopping','Tech','Santé','Autre'], abonnements:['Streaming','Cloud','Software','Télécom','Autre'], epargne:['Livret A','PEA','Crypto','Autre'] }};
 let settings = { currency:'EUR', accent:'#ff3b30', theme:'dark', hideAmounts:false, showCents:true };
-let user = { username:'', pwdHash:'', code:'', created:'', lastSync:'' };
+let user = { username:'', pwdHash:'', created:'' };
 let charts = {};
 const colors = ['#ff3b30','#ff9500','#ffcc00','#34c759','#007aff','#5856d6','#af52de','#ff2d55'];
-const API = 'https://jsonblob.com/api/jsonBlob';
+const STORAGE_KEY = 'theos_finance';
 
 // === UTILS ===
 async function sha256(s) {
@@ -622,8 +603,24 @@ function showErr(msg) {
     setTimeout(() => e.classList.remove('show'), 5000);
 }
 
+// === STORAGE ===
+function saveAll() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ user, data, settings }));
+}
+function loadAll() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+        const parsed = JSON.parse(stored);
+        user = parsed.user || user;
+        data = parsed.data || data;
+        settings = { ...settings, ...parsed.settings };
+        return true;
+    }
+    return false;
+}
+
 // === AUTH ===
-function showAuthTab(tab) {
+function showTab(tab) {
     document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
     document.getElementById('authError').classList.remove('show');
@@ -636,8 +633,8 @@ function showAuthTab(tab) {
         document.querySelector('.auth-tab:last-child').classList.add('active');
         document.getElementById('registerForm').classList.add('active');
         document.getElementById('authTabs').style.display = 'flex';
-    } else if (tab === 'link') {
-        document.getElementById('linkForm').classList.add('active');
+    } else if (tab === 'import') {
+        document.getElementById('importForm').classList.add('active');
         document.getElementById('authTabs').style.display = 'none';
     }
 }
@@ -649,218 +646,88 @@ function checkStrength(p) {
     else b.className = 'password-strength-bar strength-strong';
 }
 
-async function handleRegister(e) {
+async function doRegister(e) {
     e.preventDefault();
-    const btn = document.getElementById('regBtn');
     const username = document.getElementById('regUser').value.trim().toLowerCase();
     const pwd = document.getElementById('regPwd').value;
-    const confirm = document.getElementById('regPwdConfirm').value;
+    const pwdC = document.getElementById('regPwdC').value;
     
     if (username.length < 3) { showErr('Identifiant trop court (min 3)'); return; }
     if (pwd.length < 6) { showErr('Mot de passe trop court (min 6)'); return; }
-    if (pwd !== confirm) { showErr('Les mots de passe ne correspondent pas'); return; }
+    if (pwd !== pwdC) { showErr('Les mots de passe ne correspondent pas'); return; }
     
-    btn.disabled = true;
-    btn.textContent = 'Création...';
+    const pwdHash = await sha256(pwd);
+    user = { username, pwdHash, created: new Date().toISOString() };
+    data = { revenus:[], depenses:[], abonnements:[], epargne:[], mouvements:[], categories: data.categories };
     
-    try {
-        const pwdHash = await sha256(pwd);
-        const now = new Date().toISOString();
-        const payload = {
-            user: { username, pwdHash, created: now, lastSync: now },
-            data: data,
-            settings: settings
-        };
-        
-        console.log('Creating account...');
-        const res = await fetch(API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        
-        console.log('Response status:', res.status);
-        
-        if (!res.ok) {
-            throw new Error('Erreur serveur: ' + res.status);
-        }
-        
-        // Get the blob ID from the response URL or header
-        const location = res.headers.get('Location') || res.headers.get('X-Jsonblob') || res.url;
-        console.log('Location:', location);
-        
-        let code;
-        if (location && location.includes('/')) {
-            code = location.split('/').pop();
-        } else {
-            // Fallback: get from response body
-            const body = await res.json();
-            code = body.id || location;
-        }
-        
-        if (!code || code.length < 10) {
-            // Try to extract from URL
-            const match = res.url.match(/jsonBlob\/([a-f0-9-]+)/i);
-            if (match) code = match[1];
-        }
-        
-        console.log('Code:', code);
-        
-        if (!code) {
-            throw new Error('Impossible de récupérer le code');
-        }
-        
-        user = { username, pwdHash, code, created: now, lastSync: now };
-        
-        // Save to localStorage
-        localStorage.setItem('theos_auth', JSON.stringify({ code, pwdHash, username }));
-        
-        toast('Compte créé avec succès !', 'success');
-        enterApp();
-        
-    } catch (err) {
-        console.error('Register error:', err);
-        showErr('Erreur: ' + err.message);
-    }
-    
-    btn.disabled = false;
-    btn.textContent = 'Créer mon compte';
+    saveAll();
+    toast('Compte créé !', 'success');
+    enterApp();
 }
 
-async function handleLogin(e) {
+async function doLogin(e) {
     e.preventDefault();
-    const btn = document.getElementById('loginBtn');
     const username = document.getElementById('loginUser').value.trim().toLowerCase();
     const pwd = document.getElementById('loginPwd').value;
     
-    btn.disabled = true;
-    btn.textContent = 'Connexion...';
-    
-    try {
-        const pwdHash = await sha256(pwd);
-        const stored = localStorage.getItem('theos_auth');
-        
-        if (!stored) {
-            showErr('Aucun compte sur cet appareil. Utilisez "Lier un appareil" pour vous connecter.');
-            btn.disabled = false;
-            btn.textContent = 'Se connecter';
-            return;
-        }
-        
-        const auth = JSON.parse(stored);
-        
-        if (auth.username !== username) {
-            showErr('Identifiant incorrect');
-            btn.disabled = false;
-            btn.textContent = 'Se connecter';
-            return;
-        }
-        
-        if (auth.pwdHash !== pwdHash) {
-            showErr('Mot de passe incorrect');
-            btn.disabled = false;
-            btn.textContent = 'Se connecter';
-            return;
-        }
-        
-        // Fetch data from cloud
-        console.log('Fetching from cloud...');
-        const res = await fetch(API + '/' + auth.code);
-        
-        if (!res.ok) {
-            showErr('Erreur de synchronisation');
-            btn.disabled = false;
-            btn.textContent = 'Se connecter';
-            return;
-        }
-        
-        const cloud = await res.json();
-        user = { ...cloud.user, code: auth.code };
-        data = cloud.data || data;
-        settings = { ...settings, ...cloud.settings };
-        
-        toast('Connecté !', 'success');
-        enterApp();
-        
-    } catch (err) {
-        console.error('Login error:', err);
-        showErr('Erreur de connexion');
+    if (!loadAll()) {
+        showErr('Aucun compte sur cet appareil');
+        return;
     }
     
-    btn.disabled = false;
-    btn.textContent = 'Se connecter';
+    if (user.username !== username) {
+        showErr('Identifiant incorrect');
+        return;
+    }
+    
+    const pwdHash = await sha256(pwd);
+    if (user.pwdHash !== pwdHash) {
+        showErr('Mot de passe incorrect');
+        return;
+    }
+    
+    toast('Connecté !', 'success');
+    enterApp();
 }
 
-async function handleLink(e) {
+async function doImport(e) {
     e.preventDefault();
-    const btn = document.getElementById('linkBtn');
-    const code = document.getElementById('linkCode').value.trim();
-    const pwd = document.getElementById('linkPwd').value;
-    
-    if (!code) { showErr('Entrez le code'); return; }
-    
-    btn.disabled = true;
-    btn.textContent = 'Liaison...';
+    const code = document.getElementById('importCode').value.trim();
     
     try {
-        const pwdHash = await sha256(pwd);
-        
-        console.log('Linking device with code:', code);
-        const res = await fetch(API + '/' + code);
-        
-        if (!res.ok) {
-            showErr('Code invalide ou expiré');
-            btn.disabled = false;
-            btn.textContent = 'Lier cet appareil';
-            return;
+        const decoded = JSON.parse(atob(code));
+        if (!decoded.user || !decoded.data) {
+            throw new Error('Format invalide');
         }
         
-        const cloud = await res.json();
+        user = decoded.user;
+        data = decoded.data;
+        settings = { ...settings, ...decoded.settings };
         
-        if (cloud.user.pwdHash !== pwdHash) {
-            showErr('Mot de passe incorrect');
-            btn.disabled = false;
-            btn.textContent = 'Lier cet appareil';
-            return;
-        }
-        
-        user = { ...cloud.user, code };
-        data = cloud.data || data;
-        settings = { ...settings, ...cloud.settings };
-        
-        localStorage.setItem('theos_auth', JSON.stringify({ code, pwdHash, username: user.username }));
-        
-        toast('Appareil lié !', 'success');
+        saveAll();
+        toast('Données importées !', 'success');
         enterApp();
-        
     } catch (err) {
-        console.error('Link error:', err);
-        showErr('Erreur: ' + err.message);
+        showErr('Code invalide ou corrompu');
     }
-    
-    btn.disabled = false;
-    btn.textContent = 'Lier cet appareil';
 }
 
-async function checkSession() {
-    const stored = localStorage.getItem('theos_auth');
-    if (!stored) return false;
+function exportTransfer() {
+    const payload = { user, data, settings };
+    const code = btoa(JSON.stringify(payload));
     
-    try {
-        const auth = JSON.parse(stored);
-        const res = await fetch(API + '/' + auth.code);
-        if (!res.ok) return false;
-        
-        const cloud = await res.json();
-        if (cloud.user.pwdHash !== auth.pwdHash) return false;
-        
-        user = { ...cloud.user, code: auth.code };
-        data = cloud.data || data;
-        settings = { ...settings, ...cloud.settings };
-        return true;
-    } catch {
-        return false;
-    }
+    document.getElementById('modalT').textContent = 'Code de transfert';
+    document.getElementById('modalB').innerHTML = `
+        <div class="auth-info" style="margin-bottom:16px">
+            📱 Copiez ce code et collez-le sur votre nouvel appareil dans "Importer mes données"
+        </div>
+        <div class="form-group">
+            <textarea id="transferCode" readonly style="min-height:150px">${code}</textarea>
+        </div>
+        <button type="button" class="btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('transferCode').value);toast('Copié !','success')" style="width:100%">📋 Copier le code</button>
+    `;
+    document.getElementById('modalFoot').style.display = 'none';
+    document.getElementById('modalO').classList.add('active');
 }
 
 function enterApp() {
@@ -871,51 +738,15 @@ function enterApp() {
 
 function logout() {
     if (confirm('Déconnexion ?')) {
-        localStorage.removeItem('theos_auth');
         location.reload();
     }
 }
 
-// === SYNC ===
-let syncTimer;
-function queueSync() {
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(doSync, 2000);
-}
-
-async function doSync() {
-    if (!user.code) return;
-    setSyncUI('syncing');
-    try {
-        user.lastSync = new Date().toISOString();
-        await fetch(API + '/' + user.code, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user, data, settings })
-        });
-        setSyncUI('synced');
-    } catch (err) {
-        console.error('Sync error:', err);
-        setSyncUI('error');
-    }
-}
-
-function manualSync() {
-    doSync();
-    toast('Synchronisation...', 'success');
-}
-
-function setSyncUI(s) {
-    const el = document.getElementById('syncStatus');
-    const map = { syncing: '⟳ Sync...', synced: '✓ Synchronisé', error: '✗ Erreur' };
-    el.textContent = map[s] || '';
-    el.className = 'user-sync' + (s === 'synced' ? ' synced' : '');
-}
-
-// === APP INIT ===
-document.addEventListener('DOMContentLoaded', async () => {
-    if (await checkSession()) {
-        enterApp();
+// === INIT ===
+document.addEventListener('DOMContentLoaded', () => {
+    if (loadAll() && user.username) {
+        // Auto-login if we have saved data
+        // But still show login screen for security
     }
 });
 
@@ -926,13 +757,13 @@ function initApp() {
     refresh();
     renderSettings();
     updateDate();
-    document.getElementById('displayUserName').textContent = user.username || 'User';
-    setSyncUI('synced');
+    document.getElementById('userName').textContent = user.username || 'User';
 }
 
 function refresh() {
     renderAll();
     updateDashboard();
+    saveAll();
 }
 
 // === THEME ===
@@ -940,8 +771,8 @@ function applyTheme() {
     document.documentElement.style.setProperty('--accent', settings.accent);
     document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
 }
-function setTheme(t) { settings.theme = t; applyTheme(); queueSync(); }
-function setAccent(c) { settings.accent = c; applyTheme(); queueSync(); }
+function setTheme(t) { settings.theme = t; applyTheme(); saveAll(); }
+function setAccent(c) { settings.accent = c; applyTheme(); saveAll(); }
 
 // === SETTINGS ===
 function renderSettings() {
@@ -952,26 +783,11 @@ function renderSettings() {
     document.getElementById('sCents').checked = settings.showCents !== false;
     document.getElementById('accU').textContent = user.username || '—';
     document.getElementById('accC').textContent = user.created ? fmtD(user.created) : '—';
-    document.getElementById('accS').textContent = user.lastSync ? new Date(user.lastSync).toLocaleString('fr-FR') : '—';
     renderTags();
 }
 
-function sav(k,v) { settings[k]=v; queueSync(); }
-function tog(k,v) { settings[k]=v; applyTheme(); queueSync(); refresh(); }
-
-function showLinkModal() {
-    document.getElementById('modalT').textContent = 'Lier un appareil';
-    document.getElementById('modalB').innerHTML = `
-        <p style="color:var(--text-secondary);margin-bottom:16px">Sur votre nouvel appareil, cliquez sur "Lier cet appareil" et entrez ce code :</p>
-        <div class="link-code-box">
-            <div class="link-code">${user.code}</div>
-            <p class="link-code-hint">Code unique de votre compte</p>
-        </div>
-        <button type="button" class="btn-secondary" onclick="navigator.clipboard.writeText('${user.code}');toast('Copié !','success')" style="width:100%">📋 Copier</button>
-    `;
-    document.getElementById('modalFoot').style.display = 'none';
-    document.getElementById('modalO').classList.add('active');
-}
+function sav(k,v) { settings[k]=v; saveAll(); }
+function tog(k,v) { settings[k]=v; applyTheme(); saveAll(); refresh(); }
 
 function openPwdModal() {
     document.getElementById('modalT').textContent = 'Changer mot de passe';
@@ -995,10 +811,7 @@ async function changePwd(e) {
     if (n.length < 6) { toast('Trop court','error'); return; }
     
     user.pwdHash = await sha256(n);
-    const auth = JSON.parse(localStorage.getItem('theos_auth'));
-    auth.pwdHash = user.pwdHash;
-    localStorage.setItem('theos_auth', JSON.stringify(auth));
-    await doSync();
+    saveAll();
     closeModal();
     toast('Mot de passe changé !','success');
 }
@@ -1006,19 +819,16 @@ async function changePwd(e) {
 function clearData() {
     if (confirm('Effacer toutes les données ?')) {
         data = { revenus:[], depenses:[], abonnements:[], epargne:[], mouvements:[], categories:data.categories };
-        queueSync(); refresh();
+        saveAll(); refresh();
         toast('Données effacées','success');
     }
 }
 
-async function delAccount() {
+function delAccount() {
     if (confirm('SUPPRIMER le compte ?') && prompt('Tapez SUPPRIMER') === 'SUPPRIMER') {
-        try {
-            await fetch(API + '/' + user.code, { method: 'DELETE' });
-            localStorage.removeItem('theos_auth');
-            toast('Compte supprimé','success');
-            setTimeout(() => location.reload(), 1000);
-        } catch { toast('Erreur','error'); }
+        localStorage.removeItem(STORAGE_KEY);
+        toast('Compte supprimé','success');
+        setTimeout(() => location.reload(), 1000);
     }
 }
 
@@ -1038,13 +848,13 @@ function addCat(t) {
     const v = i.value.trim();
     if (v && !data.categories[t].includes(v)) {
         data.categories[t].push(v);
-        queueSync(); renderTags(); updateFilters(); i.value = '';
+        saveAll(); renderTags(); updateFilters(); i.value = '';
     }
 }
 function remCat(t,c) {
     if (data.categories[t].length > 1 && confirm(`Supprimer "${c}" ?`)) {
         data.categories[t] = data.categories[t].filter(x => x !== c);
-        queueSync(); renderTags(); updateFilters();
+        saveAll(); renderTags(); updateFilters();
     }
 }
 
@@ -1325,7 +1135,7 @@ function submitForm(e) {
         renderMvt(); renderEp();
     }
     
-    queueSync(); updateDashboard(); closeModal();
+    saveAll(); updateDashboard(); closeModal();
     toast('Enregistré !','success');
 }
 
@@ -1333,7 +1143,7 @@ function edit(t, id) { openModal(t, id); }
 function del(col, id) {
     if (confirm('Supprimer ?')) {
         data[col] = data[col].filter(x => x.id !== id);
-        queueSync(); renderAll(); updateDashboard();
+        saveAll(); renderAll(); updateDashboard();
         toast('Supprimé','success');
     }
 }
@@ -1365,7 +1175,7 @@ function impJSON(e) {
             if (confirm('Remplacer ?')) {
                 if (imp.data) data = imp.data;
                 if (imp.settings) settings = { ...settings, ...imp.settings };
-                queueSync(); applyTheme(); refresh(); renderSettings();
+                saveAll(); applyTheme(); refresh(); renderSettings();
                 toast('Importé','success');
             }
         } catch { toast('Erreur','error'); }
