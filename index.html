@@ -26,8 +26,10 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .auth-form{display:none;flex-direction:column;gap:16px}
 .auth-form.active{display:flex}
 .form-group{display:flex;flex-direction:column;gap:6px}
+.form-group input[type="checkbox"]{width:auto;margin-right:8px;vertical-align:middle;width:18px;height:18px;accent-color:var(--accent)}
 .form-group label{font-size:13px;color:var(--text-secondary);font-weight:500}
-.form-group input,.form-group select{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;color:var(--text-primary);width:100%}
+.checkbox-label{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-tertiary);border-radius:var(--radius-md);cursor:pointer;font-size:14px;color:var(--text-primary);font-weight:500}
+.form-group input,.form-group select{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;color:var(--text-primary);width:100%;min-width:0;max-width:100%;box-sizing:border-box}
 .form-group input:focus,.form-group select:focus{outline:0;border-color:var(--accent)}
 .auth-error{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:12px;border-radius:var(--radius-md);font-size:13px;display:none}
 .auth-error.show{display:block;margin-bottom:12px}
@@ -259,9 +261,11 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .epargne-total{flex-direction:column;text-align:center}
 .epargne-grid{grid-template-columns:1fr}
 .modal{max-height:calc(100vh - 20px);border-radius:var(--radius-lg) var(--radius-lg) 0 0;margin-top:auto}
-.modal-body{padding:16px}
+.modal-body{padding:16px;overflow-x:hidden}
 .form-row{flex-direction:column;gap:12px}
-.form-group input,.form-group select{padding:12px;width:100%;min-width:0}
+.form-group{width:100%}
+.form-group input,.form-group select{padding:12px;width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.form-group input[type="date"]{-webkit-appearance:none;appearance:none}
 .settings-row{flex-direction:column;align-items:stretch;gap:10px}
 .settings-row select,.settings-row input{width:100%}
 .add-tag-row{flex-direction:column}
@@ -513,10 +517,10 @@ function openModal(type,id){
         html=`<div class="form-group"><label>Description</label><input name="description" required value="${item?.description||''}" placeholder="Ex: Salaire"></div>
         <div class="form-row"><div class="form-group"><label>Montant</label><input type="number" name="montant" step="0.01" required value="${item?.montant||''}" placeholder="0"></div>
         <div class="form-group"><label>Catégorie</label><select name="categorie">${(data.categories.revenus||[]).map(c=>`<option${item?.categorie===c?' selected':''}>${c}</option>`).join('')}</select></div></div>
-        <div class="form-group"><label><input type="checkbox" name="isRecurrent" id="revRecCheck" ${isRec?'checked':''} onchange="toggleRevRec()"> Revenu récurrent</label></div>
+        <div class="form-group"><label class="checkbox-label"><input type="checkbox" name="isRecurrent" id="revRecCheck" ${isRec?'checked':''} onchange="toggleRevRec()"> Revenu récurrent (mensuel/annuel)</label></div>
         <div id="revRecFields" style="display:${isRec?'block':'none'}">
             <div class="form-row"><div class="form-group"><label>Fréquence</label><select name="frequence"><option value="mensuel"${item?.frequence==='mensuel'||!item?.frequence?' selected':''}>Mensuel</option><option value="annuel"${item?.frequence==='annuel'?' selected':''}>Annuel</option></select></div>
-            <div class="form-group"><label>Date perception</label><input type="date" name="datePerception" value="${item?.datePerception||today}"></div></div>
+            <div class="form-group"><label>Jour de perception</label><input type="date" name="datePerception" value="${item?.datePerception||today}"></div></div>
         </div>
         <div id="revNormalFields" style="display:${isRec?'none':'block'}">
             <div class="form-group"><label>Date</label><input type="date" name="date" value="${item?.date||today}"></div>
