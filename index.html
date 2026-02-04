@@ -30,6 +30,7 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .form-group label{font-size:13px;color:var(--text-secondary);font-weight:500}
 .checkbox-label{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-tertiary);border-radius:var(--radius-md);cursor:pointer;font-size:14px;color:var(--text-primary);font-weight:500}
 .form-group input,.form-group select{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;color:var(--text-primary);width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+.form-group input[type="date"]{-webkit-appearance:none;appearance:none}
 .form-group input:focus,.form-group select:focus{outline:0;border-color:var(--accent)}
 .auth-error{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:12px;border-radius:var(--radius-md);font-size:13px;display:none}
 .auth-error.show{display:block;margin-bottom:12px}
@@ -264,9 +265,10 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .modal{max-height:90vh;border-radius:var(--radius-lg) var(--radius-lg) 0 0;margin-top:auto;width:100%;max-width:100%}
 .modal-body{padding:12px;overflow:hidden}
 .modal-body *{max-width:100%;box-sizing:border-box}
-.modal-body .form-group{width:100%}
+.modal-body .form-group{width:100%;overflow:hidden}
 .modal-body .form-row{flex-direction:column;gap:12px}
 .modal-body input,.modal-body select{width:100%!important;max-width:100%!important;box-sizing:border-box!important;font-size:16px!important}
+.modal-body input[type="date"]{width:100%!important;max-width:100%!important;min-width:0!important;-webkit-min-logical-width:0!important}
 .settings-row{flex-direction:column;align-items:stretch;gap:10px}
 .settings-row select,.settings-row input{width:100%}
 .add-tag-row{flex-direction:column}
@@ -275,6 +277,9 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .calendar-day .day-num{font-size:12px}
 }
 @media(max-width:380px){.stats-grid{grid-template-columns:1fr}}
+@media screen and (max-width:768px){
+input[type="date"],input[type="number"],input[type="text"],select{max-width:100%!important;width:100%!important;min-width:0!important;box-sizing:border-box!important}
+}
     </style>
 </head>
 <body>
