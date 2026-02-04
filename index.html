@@ -42,7 +42,7 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .btn-secondary:hover{background:var(--bg-hover)}
 .btn-danger{background:var(--red-dim);color:var(--red);border:1px solid var(--red);padding:12px 20px;border-radius:var(--radius-md);cursor:pointer}
 .btn-danger:hover{background:var(--red);color:#fff}
-.btn-icon{background:var(--bg-tertiary);border:none;width:36px;height:36px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.btn-icon{background:var(--bg-tertiary);border:none;width:30px;height:30px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
 .btn-icon:hover{background:var(--bg-hover);color:var(--text-primary)}
 .btn-icon.delete:hover{background:var(--red-dim);color:var(--red)}
 .app{display:none;min-height:100vh}
@@ -126,18 +126,17 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .calendar-title{font-size:15px;font-weight:600;min-width:140px;text-align:center}
 .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
 .calendar-day-header{text-align:center;font-size:11px;color:var(--text-muted);padding:8px 0;font-weight:600}
-.calendar-day{background:var(--bg-tertiary);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;font-size:13px;cursor:pointer;position:relative;min-height:70px;padding:4px 2px;overflow:hidden}
+.calendar-day{aspect-ratio:1;background:var(--bg-tertiary);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;cursor:pointer;position:relative;min-height:50px;padding:4px}
 .calendar-day:hover{background:var(--bg-hover)}
 .calendar-day.other-month{opacity:.3}
 .calendar-day.today{border:2px solid var(--accent)}
-.calendar-day .day-num{font-weight:600;margin-bottom:2px;font-size:12px}
-.calendar-day .cal-ops{display:flex;flex-direction:column;gap:1px;width:100%;overflow:hidden}
-.calendar-day .cal-op{font-size:8px;padding:1px 2px;border-radius:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-.calendar-day .cal-op.green{background:var(--green-dim);color:var(--green)}
-.calendar-day .cal-op.red{background:var(--red-dim);color:var(--red)}
-.calendar-day .cal-op.orange{background:var(--orange-dim);color:var(--orange)}
-.calendar-day .cal-op.blue{background:var(--blue-dim);color:var(--blue)}
-.calendar-day .cal-more{font-size:8px;color:var(--text-muted);text-align:center}
+.calendar-day .day-num{font-weight:500;margin-bottom:2px}
+.calendar-day .day-dots{display:flex;gap:2px;position:absolute;bottom:6px}
+.calendar-day .dot{width:5px;height:5px;border-radius:50%}
+.calendar-day .dot.green{background:var(--green)}
+.calendar-day .dot.red{background:var(--red)}
+.calendar-day .dot.orange{background:var(--orange)}
+.calendar-day .dot.blue{background:var(--blue)}
 .calendar-day-detail{margin-top:16px;padding:16px;background:var(--bg-tertiary);border-radius:var(--radius-md);display:none}
 .calendar-day-detail.active{display:block}
 .calendar-day-detail h4{font-size:14px;margin-bottom:12px;color:var(--text-secondary)}
@@ -162,8 +161,8 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .list-item-amount.red{color:var(--red)}
 .list-item-amount.orange{color:var(--orange)}
 .list-item-amount.blue{color:var(--blue)}
+.list-item-amount.hidden-amount{filter:blur(8px);user-select:none}
 .list-item-actions{display:flex;gap:4px;flex-shrink:0}
-.btn-icon{background:var(--bg-tertiary);border:none;width:30px;height:30px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
 .empty-state{text-align:center;padding:40px;color:var(--text-muted)}
 .abonnements-summary{display:flex;gap:24px;margin-bottom:24px;padding:20px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-lg);flex-wrap:wrap}
 .abo-stat{display:flex;align-items:baseline;gap:6px}
@@ -262,7 +261,7 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .modal{max-height:calc(100vh - 20px);border-radius:var(--radius-lg) var(--radius-lg) 0 0;margin-top:auto}
 .modal-body{padding:16px}
 .form-row{flex-direction:column;gap:12px}
-.form-group input,.form-group select{padding:12px}
+.form-group input,.form-group select{padding:12px;width:100%;min-width:0}
 .settings-row{flex-direction:column;align-items:stretch;gap:10px}
 .settings-row select,.settings-row input{width:100%}
 .add-tag-row{flex-direction:column}
@@ -344,18 +343,7 @@ button,input,select{font-family:inherit;font-size:16px!important}
                 </div>
                 <div class="list-container" id="lDep"></div>
             </section>
-            <section id="abonnements" class="section">
-                <div class="section-header"><h1>Récurrents</h1><div style="display:flex;gap:8px"><button class="btn-primary" style="background:var(--blue)" onclick="openModal('revenu_rec')">+ Revenu</button><button class="btn-primary" style="background:var(--orange)" onclick="openModal('abonnement')">+ Dépense</button></div></div>
-                <div class="abonnements-summary">
-                    <div class="abo-stat"><span class="abo-stat-value" style="color:var(--blue)" id="recRevM">0 €</span><span class="abo-stat-label">revenus/mois</span></div>
-                    <div class="abo-stat"><span class="abo-stat-value" id="aboM">0 €</span><span class="abo-stat-label">dépenses/mois</span></div>
-                    <div class="abo-stat"><span class="abo-stat-value" style="color:var(--green)" id="recNetM">0 €</span><span class="abo-stat-label">net/mois</span></div>
-                </div>
-                <h3 style="margin:20px 0 12px;color:var(--text-secondary)">↑ Revenus récurrents</h3>
-                <div class="list-container" id="lRevRec"></div>
-                <h3 style="margin:24px 0 12px;color:var(--text-secondary)">↓ Dépenses récurrentes</h3>
-                <div class="list-container" id="lAbo"></div>
-            </section>
+            <section id="abonnements" class="section"><div class="section-header"><h1>Abonnements</h1><button class="btn-primary" onclick="openModal('abonnement')">+ Ajouter</button></div><div class="abonnements-summary"><div class="abo-stat"><span class="abo-stat-value" id="aboM">0 €</span><span class="abo-stat-label">/ mois</span></div><div class="abo-stat"><span class="abo-stat-value" id="aboY">0 €</span><span class="abo-stat-label">/ an</span></div></div><div class="list-container" id="lAbo"></div></section>
             <section id="epargne" class="section"><div class="section-header"><h1>Épargne</h1><button class="btn-primary" onclick="openModal('epargne')">+ Compte</button></div><div class="epargne-total"><span class="epargne-total-label">Total épargné</span><span class="epargne-total-value" id="epTot">0 €</span></div><div class="epargne-grid" id="epGrid"></div></section>
             <section id="settings" class="section">
                 <div class="section-header"><h1>Réglages</h1></div>
@@ -372,8 +360,7 @@ button,input,select{font-family:inherit;font-size:16px!important}
             <div class="fab-menu">
                 <button class="fab-menu-item" onclick="openModal('revenu');closeFab()"><span class="fab-icon">↑</span> Revenu</button>
                 <button class="fab-menu-item" onclick="openModal('depense');closeFab()"><span class="fab-icon">↓</span> Dépense</button>
-                <button class="fab-menu-item" onclick="openModal('revenu_rec');closeFab()"><span class="fab-icon" style="color:var(--blue)">↻</span> Rev. récurrent</button>
-                <button class="fab-menu-item" onclick="openModal('abonnement');closeFab()"><span class="fab-icon" style="color:var(--orange)">↻</span> Abonnement</button>
+                <button class="fab-menu-item" onclick="openModal('abonnement');closeFab()"><span class="fab-icon">↻</span> Abonnement</button>
             </div>
             <button class="fab-main" onclick="toggleFab()">+</button>
         </div>
@@ -462,7 +449,9 @@ function updateDate(){document.getElementById('todayDate').textContent=new Date(
 
 function getAboDepensesForPeriod(p){const abos=data.abonnements||[];let total=0;abos.forEach(a=>{if(a.frequence==='annuel'){const aboDate=new Date(a.datePrelevement);if(p.type==='all'){total+=a.montant}else if(p.type==='year'&&aboDate.getFullYear()===p.year){total+=a.montant}else if(p.type==='month'&&aboDate.getMonth()===p.month&&aboDate.getFullYear()===p.year){total+=a.montant}}else{if(p.type==='all'){total+=a.montant*12}else if(p.type==='year'){total+=a.montant*12}else{total+=a.montant}}});return total}
 
-function updateDashboard(){const t=document.getElementById('periodType').value;document.getElementById('periodMonth').style.display=t==='month'?'':'none';document.getElementById('periodYear').style.display=t==='all'?'none':'';const p=getPeriod();const fR=filterP(data.revenus||[],p);const fD=filterP(data.depenses||[],p);const tR=fR.reduce((s,x)=>s+x.montant,0);const tDBase=fD.reduce((s,x)=>s+x.montant,0);const aboDepenses=getAboDepensesForPeriod(p);const tD=tDBase+aboDepenses;const net=tR-tD;const tAMonth=(data.abonnements||[]).reduce((s,x)=>s+(x.frequence==='annuel'?x.montant/12:x.montant),0);const hc=settings.hideAmounts?' hidden-amount':'';document.getElementById('statRev').className='stat-value'+hc;document.getElementById('statDep').className='stat-value'+hc;document.getElementById('statNet').className='stat-value'+hc;document.getElementById('statAbo').className='stat-value'+hc;document.getElementById('statRev').textContent=fmt(tR);document.getElementById('statRevD').textContent=fR.length+' entrées';document.getElementById('statDep').textContent=fmt(tD);const aboCount=(data.abonnements||[]).length;document.getElementById('statDepD').textContent=fD.length+' entrées'+(aboCount>0?' + '+aboCount+' abo':'');document.getElementById('statNet').textContent=fmt(net);document.querySelector('.stat-net').className='stat-card stat-net '+(net>=0?'positive':'negative');document.getElementById('statNetD').textContent=tR>0?Math.round(net/tR*100)+'%':'—';document.getElementById('statAbo').textContent=fmt(tAMonth);document.getElementById('statAboD').textContent=aboCount+' actifs';const depWithAbo=[...fD];if(aboDepenses>0){depWithAbo.push({categorie:'Abonnements',montant:aboDepenses})}updateCharts(depWithAbo,fR);updateSummary(fD,fR);updateUpcoming();updateSavDash()}
+function getRevRecForPeriod(p){let t=0;(data.revenus_rec||[]).forEach(r=>{if(r.frequence==='annuel'){const d=new Date(r.datePerception);if(p.type==='all')t+=r.montant;else if(p.type==='year'&&d.getFullYear()===p.year)t+=r.montant;else if(p.type==='month'&&d.getMonth()===p.month&&d.getFullYear()===p.year)t+=r.montant}else{if(p.type==='all')t+=r.montant*12;else if(p.type==='year')t+=r.montant*12;else t+=r.montant}});return t}
+
+function updateDashboard(){const t=document.getElementById('periodType').value;document.getElementById('periodMonth').style.display=t==='month'?'':'none';document.getElementById('periodYear').style.display=t==='all'?'none':'';const p=getPeriod();const fR=filterP(data.revenus||[],p);const fD=filterP(data.depenses||[],p);const revRecT=getRevRecForPeriod(p);const tR=fR.reduce((s,x)=>s+x.montant,0)+revRecT;const tDBase=fD.reduce((s,x)=>s+x.montant,0);const aboDepenses=getAboDepensesForPeriod(p);const tD=tDBase+aboDepenses;const net=tR-tD;const tAMonth=(data.abonnements||[]).reduce((s,x)=>s+(x.frequence==='annuel'?x.montant/12:x.montant),0);const hc=settings.hideAmounts?' hidden-amount':'';document.getElementById('statRev').className='stat-value'+hc;document.getElementById('statDep').className='stat-value'+hc;document.getElementById('statNet').className='stat-value'+hc;document.getElementById('statAbo').className='stat-value'+hc;document.getElementById('statRev').textContent=fmt(tR);const recCount=(data.revenus_rec||[]).length;document.getElementById('statRevD').textContent=fR.length+' entrées'+(recCount>0?' + '+recCount+' rec':'');document.getElementById('statDep').textContent=fmt(tD);const aboCount=(data.abonnements||[]).length;document.getElementById('statDepD').textContent=fD.length+' entrées'+(aboCount>0?' + '+aboCount+' abo':'');document.getElementById('statNet').textContent=fmt(net);document.querySelector('.stat-net').className='stat-card stat-net '+(net>=0?'positive':'negative');document.getElementById('statNetD').textContent=tR>0?Math.round(net/tR*100)+'%':'—';document.getElementById('statAbo').textContent=fmt(tAMonth);document.getElementById('statAboD').textContent=aboCount+' actifs';const depWithAbo=[...fD];if(aboDepenses>0){depWithAbo.push({categorie:'Abonnements',montant:aboDepenses})}const revWithRec=[...fR];if(revRecT>0){revWithRec.push({categorie:'Récurrents',montant:revRecT})}updateCharts(depWithAbo,revWithRec);updateSummary(fD,fR);updateUpcoming();updateSavDash()}
 
 function filterP(items,p){if(p.type==='all')return items;return items.filter(i=>{const d=new Date(i.date);return p.type==='year'?d.getFullYear()===p.year:(d.getFullYear()===p.year&&d.getMonth()===p.month)})}
 function updateCharts(fD,fR){if(charts.dep)charts.dep.destroy();if(charts.rev)charts.rev.destroy();charts.dep=makeChart('chartDep',group(fD));charts.rev=makeChart('chartRev',group(fR));renderLeg('legDep',group(fD));renderLeg('legRev',group(fR))}
@@ -474,26 +463,37 @@ function updateUpcoming(){const c=document.getElementById('upList');if(!data.abo
 function updateSavDash(){const t=(data.epargne||[]).reduce((s,x)=>s+x.solde,0);document.getElementById('savTot').textContent=fmt(t);const c=document.getElementById('savList');c.innerHTML=data.epargne&&data.epargne.length?data.epargne.slice(0,3).map(x=>`<div class="savings-account-mini"><span>${x.nom}</span><span>${fmt(x.solde)}</span></div>`).join(''):'<div class="empty-state">Aucun compte</div>'}
 
 function calNav(dir){calMonth+=dir;if(calMonth<0){calMonth=11;calYear--}else if(calMonth>11){calMonth=0;calYear++}renderCalendar()}
-function renderCalendar(){document.getElementById('calTitle').textContent=MONTHS[calMonth]+' '+calYear;const grid=document.getElementById('calGrid');const firstDay=new Date(calYear,calMonth,1);let startDay=firstDay.getDay()-1;if(startDay<0)startDay=6;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const daysInPrev=new Date(calYear,calMonth,0).getDate();const today=new Date();const dataByDay=getDataByDay();let html=DAYS.map(d=>`<div class="calendar-day-header">${d}</div>`).join('');for(let i=0;i<startDay;i++){html+=`<div class="calendar-day other-month"><span class="day-num">${daysInPrev-startDay+i+1}</span></div>`}for(let d=1;d<=daysInMonth;d++){const key=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const isToday=today.getDate()===d&&today.getMonth()===calMonth&&today.getFullYear()===calYear;const dd=dataByDay[key]||{rev:[],dep:[],abo:[],rec:[]};const ops=[...dd.rev.map(x=>({n:x.description,c:'green'})),...dd.rec.map(x=>({n:x.description,c:'blue'})),...dd.dep.map(x=>({n:x.description,c:'red'})),...dd.abo.map(x=>({n:x.description,c:'orange'}))];const opHtml=ops.slice(0,2).map(o=>`<span class="cal-op ${o.c}">${o.n.substring(0,6)}</span>`).join('')+(ops.length>2?`<span class="cal-more">+${ops.length-2}</span>`:'');html+=`<div class="calendar-day${isToday?' today':''}" onclick="showDayDetail('${key}')"><span class="day-num">${d}</span><div class="cal-ops">${opHtml}</div></div>`}const remaining=(7-(startDay+daysInMonth)%7)%7;for(let i=1;i<=remaining;i++){html+=`<div class="calendar-day other-month"><span class="day-num">${i}</span></div>`}grid.innerHTML=html;document.getElementById('calDetail').classList.remove('active')}
-function getDataByDay(){const r={};(data.revenus||[]).forEach(x=>{if(!r[x.date])r[x.date]={rev:[],dep:[],abo:[],rec:[]};r[x.date].rev.push(x)});(data.depenses||[]).forEach(x=>{if(!r[x.date])r[x.date]={rev:[],dep:[],abo:[],rec:[]};r[x.date].dep.push(x)});(data.abonnements||[]).forEach(a=>{const day=new Date(a.datePrelevement).getDate();for(let m=0;m<12;m++){const k=calYear+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');if(!r[k])r[k]={rev:[],dep:[],abo:[],rec:[]};if(a.frequence==='annuel'){if(new Date(a.datePrelevement).getMonth()===m)r[k].abo.push(a)}else r[k].abo.push(a)}});(data.revenus_rec||[]).forEach(x=>{const day=new Date(x.datePerception).getDate();for(let m=0;m<12;m++){const k=calYear+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');if(!r[k])r[k]={rev:[],dep:[],abo:[],rec:[]};if(x.frequence==='annuel'){if(new Date(x.datePerception).getMonth()===m)r[k].rec.push(x)}else r[k].rec.push(x)}});return r}
-function showDayDetail(key){const dd=getDataByDay()[key]||{rev:[],dep:[],abo:[],rec:[]};const detail=document.getElementById('calDetail');const list=document.getElementById('calDetailList');document.getElementById('calDetailTitle').textContent=fmtD(key);let h='';dd.rev.forEach(x=>h+=`<div class="calendar-detail-item"><span>${x.description}</span><span style="color:var(--green)">+${fmt(x.montant)}</span></div>`);dd.rec.forEach(x=>h+=`<div class="calendar-detail-item"><span>${x.description} (récurrent)</span><span style="color:var(--blue)">+${fmt(x.montant)}</span></div>`);dd.dep.forEach(x=>h+=`<div class="calendar-detail-item"><span>${x.description}</span><span style="color:var(--red)">−${fmt(x.montant)}</span></div>`);dd.abo.forEach(x=>h+=`<div class="calendar-detail-item"><span>${x.description} (abo)</span><span style="color:var(--orange)">−${fmt(x.montant)}</span></div>`);list.innerHTML=h||'<div class="empty-state">Aucune opération</div>';detail.classList.add('active')}
+function renderCalendar(){document.getElementById('calTitle').textContent=MONTHS[calMonth]+' '+calYear;const grid=document.getElementById('calGrid');const firstDay=new Date(calYear,calMonth,1);let startDay=firstDay.getDay()-1;if(startDay<0)startDay=6;const daysInMonth=new Date(calYear,calMonth+1,0).getDate();const daysInPrev=new Date(calYear,calMonth,0).getDate();const today=new Date();const dataByDay=getDataByDay();let html=DAYS.map(d=>`<div class="calendar-day-header">${d}</div>`).join('');for(let i=0;i<startDay;i++){const d=daysInPrev-startDay+i+1;html+=`<div class="calendar-day other-month"><span class="day-num">${d}</span></div>`}for(let d=1;d<=daysInMonth;d++){const key=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');const isToday=today.getDate()===d&&today.getMonth()===calMonth&&today.getFullYear()===calYear;const dd=dataByDay[key]||{rev:[],dep:[],abo:[],rec:[]};const dots=[];if(dd.rev.length)dots.push('<span class="dot green"></span>');if(dd.rec.length)dots.push('<span class="dot blue"></span>');if(dd.dep.length)dots.push('<span class="dot red"></span>');if(dd.abo.length)dots.push('<span class="dot orange"></span>');html+=`<div class="calendar-day${isToday?' today':''}" onclick="showDayDetail('${key}')"><span class="day-num">${d}</span><div class="day-dots">${dots.join('')}</div></div>`}const totalCells=startDay+daysInMonth;const remaining=(7-totalCells%7)%7;for(let i=1;i<=remaining;i++){html+=`<div class="calendar-day other-month"><span class="day-num">${i}</span></div>`}grid.innerHTML=html;document.getElementById('calDetail').classList.remove('active')}
+function getDataByDay(){const result={};(data.revenus||[]).forEach(r=>{const k=r.date;if(!result[k])result[k]={rev:[],dep:[],abo:[],rec:[]};result[k].rev.push(r)});(data.depenses||[]).forEach(d=>{const k=d.date;if(!result[k])result[k]={rev:[],dep:[],abo:[],rec:[]};result[k].dep.push(d)});(data.abonnements||[]).forEach(a=>{const dateObj=new Date(a.datePrelevement);const day=dateObj.getDate();for(let m=0;m<12;m++){const k=calYear+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');if(!result[k])result[k]={rev:[],dep:[],abo:[],rec:[]};if(a.frequence==='annuel'){if(dateObj.getMonth()===m)result[k].abo.push(a)}else{result[k].abo.push(a)}}});(data.revenus_rec||[]).forEach(r=>{const dateObj=new Date(r.datePerception);const day=dateObj.getDate();for(let m=0;m<12;m++){const k=calYear+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');if(!result[k])result[k]={rev:[],dep:[],abo:[],rec:[]};if(r.frequence==='annuel'){if(dateObj.getMonth()===m)result[k].rec.push(r)}else{result[k].rec.push(r)}}});return result}
+function showDayDetail(key){const dd=getDataByDay()[key]||{rev:[],dep:[],abo:[],rec:[]};const detail=document.getElementById('calDetail');const list=document.getElementById('calDetailList');document.getElementById('calDetailTitle').textContent=fmtD(key);let html='';dd.rev.forEach(r=>{html+=`<div class="calendar-detail-item"><span>${r.description}</span><span style="color:var(--green)">+${fmt(r.montant)}</span></div>`});dd.rec.forEach(r=>{html+=`<div class="calendar-detail-item"><span>${r.description} (récurrent)</span><span style="color:var(--blue)">+${fmt(r.montant)}</span></div>`});dd.dep.forEach(d=>{html+=`<div class="calendar-detail-item"><span>${d.description}</span><span style="color:var(--red)">−${fmt(d.montant)}</span></div>`});dd.abo.forEach(a=>{html+=`<div class="calendar-detail-item"><span>${a.description} (abo)</span><span style="color:var(--orange)">−${fmt(a.montant)}</span></div>`});list.innerHTML=html||'<div class="empty-state">Aucune opération</div>';detail.classList.add('active')}
 
-function sortItems(arr,sort){const[f,dir]=sort.split('-');return[...arr].sort((a,b)=>{let va,vb;if(f==='date'){va=new Date(a.date);vb=new Date(b.date)}else if(f==='montant'){va=a.montant;vb=b.montant}else{va=(a.description||'').toLowerCase();vb=(b.description||'').toLowerCase()}return dir==='asc'?(va>vb?1:-1):(va<vb?1:-1)})}
+function renderAll(){renderRev();renderDep();renderAbo();renderEp();populateFilters()}
+
+function sortItems(arr,sort){const[f,dir]=sort.split('-');return[...arr].sort((a,b)=>{let va,vb;if(f==='date'){va=new Date(a.date||a.datePerception);vb=new Date(b.date||b.datePerception)}else if(f==='montant'){va=a.montant;vb=b.montant}else{va=(a.description||'').toLowerCase();vb=(b.description||'').toLowerCase()}return dir==='asc'?(va>vb?1:-1):(va<vb?1:-1)})}
 function filterItems(arr,search,cat){return arr.filter(x=>(x.description||'').toLowerCase().includes(search)&&(!cat||x.categorie===cat))}
 function populateFilters(){document.getElementById('fRevC').innerHTML='<option value="">Catégorie</option>'+(data.categories?.revenus||[]).map(c=>`<option>${c}</option>`).join('');document.getElementById('fDepC').innerHTML='<option value="">Catégorie</option>'+(data.categories?.depenses||[]).map(c=>`<option>${c}</option>`).join('')}
 function applyFilters(type){if(type==='revenus')renderRev();else if(type==='depenses')renderDep()}
+function toggleRevRec(){const c=document.getElementById('revRecCheck').checked;document.getElementById('revRecFields').style.display=c?'block':'none';document.getElementById('revNormalFields').style.display=c?'none':'block'}
 
-function renderAll(){renderRev();renderDep();renderAbo();renderEp();populateFilters()}
-function renderRev(){const c=document.getElementById('lRev'),search=(document.getElementById('fRev')?.value||'').toLowerCase(),cat=document.getElementById('fRevC')?.value||'',sort=document.getElementById('fRevS')?.value||'date-desc';let items=filterItems(data.revenus||[],search,cat);items=sortItems(items,sort);c.innerHTML=items.length?items.map(i=>`<div class="list-item"><div class="list-item-icon green">↑</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${fmtD(i.date)} • ${i.categorie||''}</span></div><span class="list-item-amount green${settings.hideAmounts?' hidden-amount':''}">+${fmt(i.montant)}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('revenus','${i.id}')" title="Dupliquer">⧉</button><button class="btn-icon" onclick="edit('revenu','${i.id}')">✎</button><button class="btn-icon delete" onclick="del('revenus','${i.id}')">×</button></div></div>`).join(''):'<div class="empty-state">Aucun revenu</div>'}
-function renderDep(){const c=document.getElementById('lDep'),search=(document.getElementById('fDep')?.value||'').toLowerCase(),cat=document.getElementById('fDepC')?.value||'',sort=document.getElementById('fDepS')?.value||'date-desc';let items=filterItems(data.depenses||[],search,cat);items=sortItems(items,sort);c.innerHTML=items.length?items.map(i=>`<div class="list-item"><div class="list-item-icon red">↓</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${fmtD(i.date)} • ${i.categorie||''}</span></div><span class="list-item-amount red${settings.hideAmounts?' hidden-amount':''}">−${fmt(i.montant)}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('depenses','${i.id}')" title="Dupliquer">⧉</button><button class="btn-icon" onclick="edit('depense','${i.id}')">✎</button><button class="btn-icon delete" onclick="del('depenses','${i.id}')">×</button></div></div>`).join(''):'<div class="empty-state">Aucune dépense</div>'}
-function renderAbo(){const revM=(data.revenus_rec||[]).reduce((s,x)=>s+(x.frequence==='annuel'?x.montant/12:x.montant),0);const depM=(data.abonnements||[]).reduce((s,a)=>s+(a.frequence==='annuel'?a.montant/12:a.montant),0);const netM=revM-depM;document.getElementById('recRevM').textContent=fmt(revM);document.getElementById('aboM').textContent=fmt(depM);document.getElementById('recNetM').textContent=fmt(netM);document.getElementById('recNetM').style.color=netM>=0?'var(--green)':'var(--red)';
-const lRec=document.getElementById('lRevRec');lRec.innerHTML=(data.revenus_rec||[]).length?(data.revenus_rec||[]).map(i=>{const j=new Date(i.datePerception).getDate(),fl=i.frequence==='annuel'?`Le ${fmtD(i.datePerception)} (annuel)`:`Le ${j} de chaque mois`;return`<div class="list-item"><div class="list-item-icon blue">↻</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${fl} • ${i.categorie||''}</span></div><span class="list-item-amount blue${settings.hideAmounts?' hidden-amount':''}">+${fmt(i.montant)}${i.frequence==='annuel'?'/an':'/mois'}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('revenus_rec','${i.id}')">⧉</button><button class="btn-icon" onclick="edit('revenu_rec','${i.id}')">✎</button><button class="btn-icon delete" onclick="del('revenus_rec','${i.id}')">×</button></div></div>`}).join(''):'<div class="empty-state">Aucun revenu récurrent</div>';
-const c=document.getElementById('lAbo');c.innerHTML=(data.abonnements||[]).length?(data.abonnements||[]).map(i=>{const j=new Date(i.datePrelevement).getDate(),fl=i.frequence==='annuel'?`Le ${fmtD(i.datePrelevement)} (annuel)`:`Le ${j} de chaque mois`;return`<div class="list-item"><div class="list-item-icon orange">↻</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${fl} • ${i.categorie||''}</span></div><span class="list-item-amount orange${settings.hideAmounts?' hidden-amount':''}">−${fmt(i.montant)}${i.frequence==='annuel'?'/an':'/mois'}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('abonnements','${i.id}')">⧉</button><button class="btn-icon" onclick="edit('abonnement','${i.id}')">✎</button><button class="btn-icon delete" onclick="del('abonnements','${i.id}')">×</button></div></div>`}).join(''):'<div class="empty-state">Aucun abonnement</div>'}
-function renderEp(){const c=document.getElementById('epGrid');const t=(data.epargne||[]).reduce((s,x)=>s+x.solde,0);document.getElementById('epTot').textContent=fmt(t);c.innerHTML=data.epargne&&data.epargne.length?data.epargne.map(x=>{const hasGoal=x.objectif&&x.objectif>0;const progress=hasGoal?Math.min(100,Math.round(x.solde/x.objectif*100)):0;const progressHtml=hasGoal?`<div class="epargne-progress-container"><div class="epargne-progress-header"><span>Objectif: ${fmt(x.objectif)}</span><span>${progress}%</span></div><div class="epargne-progress-bar"><div class="epargne-progress-fill" style="width:${progress}%"></div></div></div>`:'<div class="epargne-no-goal">Aucun objectif défini</div>';return`<div class="epargne-card"><div class="epargne-card-header"><span class="epargne-card-name">${x.nom}</span><span class="epargne-card-type">${x.type}</span></div><div class="epargne-card-amount${settings.hideAmounts?' hidden-amount':''}">${fmt(x.solde)}</div>${progressHtml}<div class="epargne-card-footer"><div class="epargne-card-actions"><button class="btn-icon" onclick="openModal('ajustement','${x.id}')" title="Ajuster">↕</button><button class="btn-icon" onclick="edit('epargne','${x.id}')">✎</button><button class="btn-icon delete" onclick="del('epargne','${x.id}')">×</button></div></div></div>`}).join(''):'<div class="empty-state">Aucun compte</div>'}
-function updateFilters(){document.getElementById('fRevC').innerHTML='<option value="">Toutes</option>'+(data.categories.revenus||[]).map(c=>`<option>${c}</option>`).join('');document.getElementById('fDepC').innerHTML='<option value="">Toutes</option>'+(data.categories.depenses||[]).map(c=>`<option>${c}</option>`).join('')}
-function filter(t){const m={revenus:['fRev','fRevC','lRev'],depenses:['fDep','fDepC','lDep']};const[fId,catId,listId]=m[t],s=document.getElementById(fId).value.toLowerCase(),cat=document.getElementById(catId).value;document.querySelectorAll('#'+listId+' .list-item').forEach(i=>{const ti=i.querySelector('.list-item-title').textContent.toLowerCase(),su=i.querySelector('.list-item-subtitle').textContent;i.style.display=ti.includes(s)&&(!cat||su.includes(cat))?'flex':'none'})}
+function renderRev(){const c=document.getElementById('lRev'),search=(document.getElementById('fRev')?.value||'').toLowerCase(),cat=document.getElementById('fRevC')?.value||'',sort=document.getElementById('fRevS')?.value||'date-desc';
+const allRev=[...(data.revenus||[]).map(x=>({...x,isRec:false})),...(data.revenus_rec||[]).map(x=>({...x,isRec:true,date:x.datePerception}))];
+let items=filterItems(allRev,search,cat);items=sortItems(items,sort);
+c.innerHTML=items.length?items.map(i=>{
+const icon=i.isRec?'↻':'↑';const color=i.isRec?'blue':'green';
+const subtitle=i.isRec?`${i.frequence==='annuel'?'Annuel':'Mensuel'} • ${i.categorie||''}`:`${fmtD(i.date)} • ${i.categorie||''}`;
+const amount=i.isRec?`${fmt(i.montant)}${i.frequence==='annuel'?'/an':'/mois'}`:`+${fmt(i.montant)}`;
+const col=i.isRec?'revenus_rec':'revenus';
+return`<div class="list-item"><div class="list-item-icon ${color}">${icon}</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${subtitle}</span></div><span class="list-item-amount ${color}${settings.hideAmounts?' hidden-amount':''}">${amount}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('${col}','${i.id}')">⧉</button><button class="btn-icon" onclick="editRev('${i.id}',${i.isRec})">✎</button><button class="btn-icon delete" onclick="del('${col}','${i.id}')">×</button></div></div>`}).join(''):'<div class="empty-state">Aucun revenu</div>'}
 
-function duplicate(col,id){const item=data[col].find(x=>x.id===id);if(!item)return;const newItem={...item,id:genId(),date:new Date().toISOString().split('T')[0]};data[col].push(newItem);scheduleSync();renderAll();updateDashboard();renderCalendar();toast('Dupliqué !')}
+function renderDep(){const c=document.getElementById('lDep'),search=(document.getElementById('fDep')?.value||'').toLowerCase(),cat=document.getElementById('fDepC')?.value||'',sort=document.getElementById('fDepS')?.value||'date-desc';let items=filterItems(data.depenses||[],search,cat);items=sortItems(items,sort);c.innerHTML=items.length?items.map(i=>`<div class="list-item"><div class="list-item-icon red">↓</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${fmtD(i.date)} • ${i.categorie||''}</span></div><span class="list-item-amount red${settings.hideAmounts?' hidden-amount':''}">−${fmt(i.montant)}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('depenses','${i.id}')">⧉</button><button class="btn-icon" onclick="edit('depense','${i.id}')">✎</button><button class="btn-icon delete" onclick="del('depenses','${i.id}')">×</button></div></div>`).join(''):'<div class="empty-state">Aucune dépense</div>'}
+
+function renderAbo(){const c=document.getElementById('lAbo');const abos=data.abonnements||[];const tmMonth=abos.reduce((s,a)=>s+(a.frequence==='annuel'?a.montant/12:a.montant),0);const tmYear=abos.reduce((s,a)=>s+(a.frequence==='annuel'?a.montant:a.montant*12),0);document.getElementById('aboM').textContent=fmt(tmMonth);document.getElementById('aboY').textContent=fmt(tmYear);c.innerHTML=abos.length?abos.map(i=>{const dateObj=new Date(i.datePrelevement);const jour=dateObj.getDate();const freqLabel=i.frequence==='annuel'?`Le ${fmtD(i.datePrelevement)} (annuel)`:`Le ${jour} de chaque mois`;return`<div class="list-item"><div class="list-item-icon orange">↻</div><div class="list-item-info"><span class="list-item-title">${i.description}</span><span class="list-item-subtitle">${freqLabel} • ${i.categorie||''}</span></div><span class="list-item-amount orange${settings.hideAmounts?' hidden-amount':''}">−${fmt(i.montant)}${i.frequence==='annuel'?'/an':'/mois'}</span><div class="list-item-actions"><button class="btn-icon" onclick="duplicate('abonnements','${i.id}')">⧉</button><button class="btn-icon" onclick="edit('abonnement','${i.id}')">✎</button><button class="btn-icon delete" onclick="del('abonnements','${i.id}')">×</button></div></div>`}).join(''):'<div class="empty-state">Aucun abonnement</div>'}
+
+function editRev(id,isRec){if(isRec){editType='revenu';editId=id;openModal('revenu',id)}else{edit('revenu',id)}}
+
+function renderEp(){const c=document.getElementById('epGrid');const t=(data.epargne||[]).reduce((s,x)=>s+x.solde,0);document.getElementById('epTot').textContent=fmt(t);c.innerHTML=data.epargne&&data.epargne.length?data.epargne.map(x=>{const hasGoal=x.objectif&&x.objectif>0;const progress=hasGoal?Math.min(100,Math.round(x.solde/x.objectif*100)):0;const progressHtml=hasGoal?`<div class="epargne-progress-container"><div class="epargne-progress-header"><span>Objectif: ${fmt(x.objectif)}</span><span>${progress}%</span></div><div class="epargne-progress-bar"><div class="epargne-progress-fill" style="width:${progress}%"></div></div></div>`:'<div class="epargne-no-goal">Aucun objectif défini</div>';return`<div class="epargne-card"><div class="epargne-card-header"><span class="epargne-card-name">${x.nom}</span><span class="epargne-card-type">${x.type||''}</span></div><div class="epargne-card-amount${settings.hideAmounts?' hidden-amount':''}">${fmt(x.solde)}</div>${progressHtml}<div class="epargne-card-footer"><div class="epargne-card-actions"><button class="btn-icon" onclick="openModal('ajustement','${x.id}')" title="Ajuster">↕</button><button class="btn-icon" onclick="edit('epargne','${x.id}')">✎</button><button class="btn-icon delete" onclick="del('epargne','${x.id}')">×</button></div></div></div>`}).join(''):'<div class="empty-state">Aucun compte</div>'}
+
+function duplicate(col,id){const item=data[col].find(x=>x.id===id);if(!item)return;const newItem={...item,id:genId()};if(newItem.date)newItem.date=new Date().toISOString().split('T')[0];data[col].push(newItem);scheduleSync();renderAll();updateDashboard();renderCalendar();toast('Dupliqué !')}
 
 let editId=null,editType=null;
 function openModal(type,id){
@@ -506,11 +506,21 @@ function openModal(type,id){
     
     if(type==='revenu'){
         const r=id?(data.revenus||[]).find(x=>x.id===id):null;
+        const rr=id?(data.revenus_rec||[]).find(x=>x.id===id):null;
+        const item=r||rr;
+        const isRec=!!rr;
         title.textContent=id?'Modifier revenu':'Ajouter revenu';
-        html=`<div class="form-group"><label>Description</label><input name="description" required value="${r?.description||''}" placeholder="Ex: Salaire"></div>
-        <div class="form-row"><div class="form-group"><label>Montant</label><input type="number" name="montant" step="0.01" required value="${r?.montant||''}" placeholder="0"></div>
-        <div class="form-group"><label>Date</label><input type="date" name="date" required value="${r?.date||today}"></div></div>
-        <div class="form-group"><label>Catégorie</label><select name="categorie">${(data.categories.revenus||[]).map(c=>`<option${r?.categorie===c?' selected':''}>${c}</option>`).join('')}</select></div>`;
+        html=`<div class="form-group"><label>Description</label><input name="description" required value="${item?.description||''}" placeholder="Ex: Salaire"></div>
+        <div class="form-row"><div class="form-group"><label>Montant</label><input type="number" name="montant" step="0.01" required value="${item?.montant||''}" placeholder="0"></div>
+        <div class="form-group"><label>Catégorie</label><select name="categorie">${(data.categories.revenus||[]).map(c=>`<option${item?.categorie===c?' selected':''}>${c}</option>`).join('')}</select></div></div>
+        <div class="form-group"><label><input type="checkbox" name="isRecurrent" id="revRecCheck" ${isRec?'checked':''} onchange="toggleRevRec()"> Revenu récurrent</label></div>
+        <div id="revRecFields" style="display:${isRec?'block':'none'}">
+            <div class="form-row"><div class="form-group"><label>Fréquence</label><select name="frequence"><option value="mensuel"${item?.frequence==='mensuel'||!item?.frequence?' selected':''}>Mensuel</option><option value="annuel"${item?.frequence==='annuel'?' selected':''}>Annuel</option></select></div>
+            <div class="form-group"><label>Date perception</label><input type="date" name="datePerception" value="${item?.datePerception||today}"></div></div>
+        </div>
+        <div id="revNormalFields" style="display:${isRec?'none':'block'}">
+            <div class="form-group"><label>Date</label><input type="date" name="date" value="${item?.date||today}"></div>
+        </div>`;
     }else if(type==='depense'){
         const d=id?(data.depenses||[]).find(x=>x.id===id):null;
         title.textContent=id?'Modifier dépense':'Ajouter dépense';
@@ -522,22 +532,12 @@ function openModal(type,id){
         const a=id?(data.abonnements||[]).find(x=>x.id===id):null;
         const defaultDate=a?.datePrelevement||today;
         const freq=a?.frequence||'mensuel';
-        title.textContent=id?'Modifier dépense récurrente':'Ajouter dépense récurrente';
+        title.textContent=id?'Modifier abonnement':'Ajouter abonnement';
         html=`<div class="form-group"><label>Description</label><input name="description" required value="${a?.description||''}" placeholder="Ex: Netflix"></div>
         <div class="form-row"><div class="form-group"><label>Montant</label><input type="number" name="montant" step="0.01" required value="${a?.montant||''}" placeholder="0"></div>
         <div class="form-group"><label>Fréquence</label><select name="frequence"><option value="mensuel"${freq==='mensuel'?' selected':''}>Mensuel</option><option value="annuel"${freq==='annuel'?' selected':''}>Annuel</option></select></div></div>
         <div class="form-group"><label>Date de prélèvement</label><input type="date" name="datePrelevement" required value="${defaultDate}"><p class="settings-hint">Pour les mensuels, seul le jour sera utilisé</p></div>
         <div class="form-group"><label>Catégorie</label><select name="categorie">${(data.categories.abonnements||[]).map(c=>`<option${a?.categorie===c?' selected':''}>${c}</option>`).join('')}</select></div>`;
-    }else if(type==='revenu_rec'){
-        const r=id?(data.revenus_rec||[]).find(x=>x.id===id):null;
-        const defaultDate=r?.datePerception||today;
-        const freq=r?.frequence||'mensuel';
-        title.textContent=id?'Modifier revenu récurrent':'Ajouter revenu récurrent';
-        html=`<div class="form-group"><label>Description</label><input name="description" required value="${r?.description||''}" placeholder="Ex: Salaire"></div>
-        <div class="form-row"><div class="form-group"><label>Montant</label><input type="number" name="montant" step="0.01" required value="${r?.montant||''}" placeholder="0"></div>
-        <div class="form-group"><label>Fréquence</label><select name="frequence"><option value="mensuel"${freq==='mensuel'?' selected':''}>Mensuel</option><option value="annuel"${freq==='annuel'?' selected':''}>Annuel</option></select></div></div>
-        <div class="form-group"><label>Date de perception</label><input type="date" name="datePerception" required value="${defaultDate}"><p class="settings-hint">Pour les mensuels, seul le jour sera utilisé</p></div>
-        <div class="form-group"><label>Catégorie</label><select name="categorie">${(data.categories.revenus||[]).map(c=>`<option${r?.categorie===c?' selected':''}>${c}</option>`).join('')}</select></div>`;
     }else if(type==='epargne'){
         const e=id?(data.epargne||[]).find(x=>x.id===id):null;
         title.textContent=id?'Modifier compte':'Nouveau compte';
@@ -566,8 +566,32 @@ function submitForm(e){
     if(entry.nouveauSolde)entry.nouveauSolde=parseFloat(entry.nouveauSolde);
     
     if(editType==='revenu'){
-        if(editId){const i=data.revenus.findIndex(x=>x.id===editId);data.revenus[i]={...data.revenus[i],...entry}}
-        else{entry.id=genId();data.revenus.push(entry)}
+        const isRec=entry.isRecurrent==='on';
+        delete entry.isRecurrent;
+        if(!data.revenus_rec)data.revenus_rec=[];
+        if(isRec){
+            delete entry.date;
+            if(editId){
+                // Si existait en revenu normal, le supprimer
+                const iNormal=data.revenus.findIndex(x=>x.id===editId);
+                if(iNormal>=0)data.revenus.splice(iNormal,1);
+                // Chercher en rec
+                const iRec=data.revenus_rec.findIndex(x=>x.id===editId);
+                if(iRec>=0){data.revenus_rec[iRec]={...data.revenus_rec[iRec],...entry}}
+                else{entry.id=editId;data.revenus_rec.push(entry)}
+            }else{entry.id=genId();data.revenus_rec.push(entry)}
+        }else{
+            delete entry.frequence;delete entry.datePerception;
+            if(editId){
+                // Si existait en rec, le supprimer
+                const iRec=data.revenus_rec.findIndex(x=>x.id===editId);
+                if(iRec>=0)data.revenus_rec.splice(iRec,1);
+                // Chercher en normal
+                const iNormal=data.revenus.findIndex(x=>x.id===editId);
+                if(iNormal>=0){data.revenus[iNormal]={...data.revenus[iNormal],...entry}}
+                else{entry.id=editId;data.revenus.push(entry)}
+            }else{entry.id=genId();data.revenus.push(entry)}
+        }
         renderRev();
     }else if(editType==='depense'){
         if(editId){const i=data.depenses.findIndex(x=>x.id===editId);data.depenses[i]={...data.depenses[i],...entry}}
@@ -576,11 +600,6 @@ function submitForm(e){
     }else if(editType==='abonnement'){
         if(editId){const i=data.abonnements.findIndex(x=>x.id===editId);data.abonnements[i]={...data.abonnements[i],...entry}}
         else{entry.id=genId();data.abonnements.push(entry)}
-        renderAbo();
-    }else if(editType==='revenu_rec'){
-        if(!data.revenus_rec)data.revenus_rec=[];
-        if(editId){const i=data.revenus_rec.findIndex(x=>x.id===editId);data.revenus_rec[i]={...data.revenus_rec[i],...entry}}
-        else{entry.id=genId();data.revenus_rec.push(entry)}
         renderAbo();
     }else if(editType==='epargne'){
         if(editId){const i=data.epargne.findIndex(x=>x.id===editId);data.epargne[i]={...data.epargne[i],...entry}}
