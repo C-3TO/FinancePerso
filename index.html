@@ -407,7 +407,24 @@ window.addEventListener('online',updateOnlineStatus);
 window.addEventListener('offline',updateOnlineStatus);
 
 async function kvGet(k){if(!isOnline)return null;try{const r=await fetch(API(k));if(r.status===404)return null;if(!r.ok)throw new Error();return await r.json()}catch(e){return null}}
-async function kvSet(k,v){if(!isOnline){saveLocal();return true}setSyncStatus('syncing');try{const r=await fetch(API(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});if(!r.ok)throw new Error();setSyncStatus('ok');return true}catch(e){console.error(e);setSyncStatus('error');saveLocal();return false}}
+async function kvSet(k,v){
+    saveLocal(); // TOUJOURS sauvegarder localement d'abord
+    
+    if(!isOnline){
+        return true;
+    }
+    setSyncStatus('syncing');
+    try{
+        const r=await fetch(API(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)});
+        if(!r.ok)throw new Error();
+        setSyncStatus('ok');
+        return true;
+    }catch(e){
+        console.error(e);
+        setSyncStatus('error');
+        return false;
+    }
+}
 async function kvDel(k){if(!isOnline)return;try{await fetch(API(k),{method:'DELETE'})}catch(e){}}
 function saveLocal(){localStorage.setItem('theos_offline_data',JSON.stringify({data,settings,user:currentUser}))}
 function loadLocal(){const s=localStorage.getItem('theos_offline_data');if(s){const o=JSON.parse(s);if(o.user===currentUser){data=o.data||data;settings=o.settings||settings}}}
@@ -425,9 +442,34 @@ function logout(){if(confirm('Déconnexion ?')){localStorage.removeItem('theos_s
 
 async function syncToCloud(){if(!isOnline||!encKey)return;try{const userData=await kvGet('user_'+currentUser);if(userData){userData.encData=await encrypt(JSON.stringify(data),encKey);userData.settings=settings;delete userData.data;await kvSet('user_'+currentUser,userData)}saveLocal()}catch(e){console.error(e);setSyncStatus('error')}}
 let syncTimeout=null;
-function scheduleSync(){saveLocal();if(syncTimeout)clearTimeout(syncTimeout);syncTimeout=setTimeout(syncToCloud,1500)}
+function scheduleSync(){
+    // SAUVEGARDER IMMÉDIATEMENT EN LOCAL (backup de sécurité)
+    saveLocal();
+    
+    // Puis planifier le cloud sync avec debounce
+    if(syncTimeout)clearTimeout(syncTimeout);
+    syncTimeout=setTimeout(syncToCloud,1500);
+}
 
 document.addEventListener('DOMContentLoaded',async()=>{applyTheme();updateOnlineStatus();setLoading(true);if(await tryAutoLogin()){enterApp()}else{setLoading(false)}});
+
+// Forcer la sauvegarde avant de quitter la page
+window.addEventListener('beforeunload', (e) => {
+    if(syncTimeout) {
+        clearTimeout(syncTimeout);
+        saveLocal(); // Garantir la sauvegarde locale
+        // Tentative de sync cloud (peut être interrompue par le navigateur)
+        if(navigator.sendBeacon && encKey && currentUser) {
+            const userData = {
+                encData: null,
+                settings: settings
+            };
+            // Note: encrypt est async, donc on fait de notre mieux avec sendBeacon
+            // La sauvegarde locale est le filet de sécurité principal
+            navigator.sendBeacon(API('user_'+currentUser), JSON.stringify(userData));
+        }
+    }
+});
 
 function initApp(){applyTheme();initNav();initPeriod();refresh();renderSettings();updateDate();renderCalendar();document.getElementById('userName').textContent=currentUser}
 function refresh(){renderAll();updateDashboard();scheduleSync()}
