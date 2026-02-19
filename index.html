@@ -392,7 +392,7 @@ const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
 async function deriveKey(password,salt){const enc=new TextEncoder();const keyMaterial=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:enc.encode(salt),iterations:100000,hash:'SHA-256'},keyMaterial,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
 async function encrypt(text,key){const enc=new TextEncoder();const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(text));const buf=new Uint8Array(iv.length+ct.byteLength);buf.set(iv);buf.set(new Uint8Array(ct),iv.length);return btoa(String.fromCharCode(...buf))}
-async function decrypt(b64,key){try{const buf=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));const iv=buf.slice(0,12);const ct=buf.slice(12);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);return new TextDecoder().decode(pt)}catch(e){return null}}
+async function decrypt(b64,key){try{const buf=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));const iv=buf.slice(0,12);const ct=buf.slice(12);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);return new TextDecoder().decode(pt)}catch(e){console.error('[DECRYPT] Échec déchiffrement:', e);return null}}
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
@@ -408,8 +408,7 @@ window.addEventListener('offline',updateOnlineStatus);
 
 async function kvGet(k){if(!isOnline)return null;try{const r=await fetch(API(k));if(r.status===404)return null;if(!r.ok)throw new Error();return await r.json()}catch(e){return null}}
 async function kvSet(k,v){
-    saveLocal(); // TOUJOURS sauvegarder localement d'abord
-    
+    saveLocal();
     if(!isOnline){
         return true;
     }
@@ -431,45 +430,152 @@ function loadLocal(){const s=localStorage.getItem('theos_offline_data');if(s){co
 
 function showTab(t){document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.auth-form').forEach(x=>x.classList.remove('active'));document.getElementById('authError').classList.remove('show');if(t==='login'){document.querySelector('.auth-tab:first-child').classList.add('active');document.getElementById('loginForm').classList.add('active')}else{document.querySelector('.auth-tab:last-child').classList.add('active');document.getElementById('registerForm').classList.add('active')}}
 
-async function doRegister(e){e.preventDefault();const u=document.getElementById('regUser').value.trim().toLowerCase(),p=document.getElementById('regPwd').value,c=document.getElementById('regPwdC').value;if(u.length<3){showErr('Identifiant trop court');return}if(p.length<6){showErr('Mot de passe trop court');return}if(p!==c){showErr('Mots de passe différents');return}setLoading(true);try{const existing=await kvGet('user_'+u);if(existing){setLoading(false);showErr('Identifiant déjà pris');return}const h=await sha256(p);encKey=await deriveKey(p,u);const created=new Date().toISOString();const initData={revenus:[],depenses:[],abonnements:[],epargne:[],categories:{...data.categories}};const encData=await encrypt(JSON.stringify(initData),encKey);const userData={pwdHash:h,created,encData,settings:{...settings}};await kvSet('user_'+u,userData);currentUser=u;userCreated=created;data=initData;localStorage.setItem('theos_session',JSON.stringify({u,h,p:btoa(p)}));toast('Compte créé !');enterApp()}catch(err){console.error(err);setLoading(false);showErr('Erreur réseau')}}
+async function doRegister(e){e.preventDefault();const u=document.getElementById('regUser').value.trim().toLowerCase(),p=document.getElementById('regPwd').value,c=document.getElementById('regPwdC').value;if(u.length<3){showErr('Identifiant trop court');return}if(p.length<6){showErr('Mot de passe trop court');return}if(p!==c){showErr('Mots de passe différents');return}setLoading(true);try{const existing=await kvGet('user_'+u);if(existing){setLoading(false);showErr('Identifiant déjà pris');return}const h=await sha256(p);encKey=await deriveKey(p,u);const created=new Date().toISOString();const initData={revenus:[],depenses:[],abonnements:[],epargne:[],revenus_rec:[],categories:{...data.categories}};const encData=await encrypt(JSON.stringify(initData),encKey);const userData={pwdHash:h,created,encData,settings:{...settings}};await kvSet('user_'+u,userData);currentUser=u;userCreated=created;data=initData;localStorage.setItem('theos_session',JSON.stringify({u,h,p:btoa(p)}));toast('Compte créé !');enterApp()}catch(err){console.error(err);setLoading(false);showErr('Erreur réseau')}}
 
-async function doLogin(e){e.preventDefault();const u=document.getElementById('loginUser').value.trim().toLowerCase(),p=document.getElementById('loginPwd').value;setLoading(true);try{const userData=await kvGet('user_'+u);if(!userData){setLoading(false);showErr('Compte introuvable');return}const h=await sha256(p);if(userData.pwdHash!==h){setLoading(false);showErr('Mot de passe incorrect');return}encKey=await deriveKey(p,u);currentUser=u;userCreated=userData.created;if(userData.encData){const dec=await decrypt(userData.encData,encKey);if(dec)data=JSON.parse(dec)}else if(userData.data){data=userData.data}if(!data.categories)data.categories={revenus:['Salaire','Freelance','YouTube','Autre'],depenses:['Alimentation','Transport','Logement','Loisirs','Shopping','Tech','Santé','Abonnements','Autre'],abonnements:['Streaming','Cloud','Software','Télécom','Autre'],epargne:['Livret A','PEA','Crypto','Autre']};if(!data.categories.depenses.includes('Abonnements')){data.categories.depenses.push('Abonnements')}settings={...settings,...userData.settings};localStorage.setItem('theos_session',JSON.stringify({u,h,p:btoa(p)}));toast('Connecté !');enterApp()}catch(err){console.error(err);setLoading(false);showErr('Erreur réseau')}}
+async function doLogin(e){e.preventDefault();const u=document.getElementById('loginUser').value.trim().toLowerCase(),p=document.getElementById('loginPwd').value;setLoading(true);try{const userData=await kvGet('user_'+u);if(!userData){setLoading(false);showErr('Compte introuvable');return}const h=await sha256(p);if(userData.pwdHash!==h){setLoading(false);showErr('Mot de passe incorrect');return}encKey=await deriveKey(p,u);currentUser=u;userCreated=userData.created;
 
-async function tryAutoLogin(){const s=localStorage.getItem('theos_session');if(!s)return false;try{const{u,h,p}=JSON.parse(s);currentUser=u;if(!isOnline){loadLocal();if(data.revenus||data.depenses){return true}return false}const userData=await kvGet('user_'+u);if(!userData||userData.pwdHash!==h)return false;if(p){encKey=await deriveKey(atob(p),u)}else{return false}userCreated=userData.created;if(userData.encData){const dec=await decrypt(userData.encData,encKey);if(dec)data=JSON.parse(dec)}else if(userData.data){data=userData.data}if(!data.categories)data.categories={revenus:['Salaire','Freelance','YouTube','Autre'],depenses:['Alimentation','Transport','Logement','Loisirs','Shopping','Tech','Santé','Abonnements','Autre'],abonnements:['Streaming','Cloud','Software','Télécom','Autre'],epargne:['Livret A','PEA','Crypto','Autre']};if(!data.categories.depenses.includes('Abonnements')){data.categories.depenses.push('Abonnements')}settings={...settings,...userData.settings};return true}catch(e){console.error(e)}return false}
+/* === PATCH: Gestion robuste des données au login === */
+let dataLoaded = false;
+if(userData.encData){
+    const dec=await decrypt(userData.encData,encKey);
+    if(dec){
+        try {
+            data=JSON.parse(dec);
+            dataLoaded = true;
+        } catch(parseErr) {
+            console.error('[LOGIN] Données corrompues (JSON invalide):', parseErr);
+        }
+    } else {
+        console.warn('[LOGIN] Déchiffrement échoué — données possiblement corrompues');
+    }
+} else if(userData.data){
+    data=userData.data;
+    dataLoaded = true;
+}
+
+if(!dataLoaded) {
+    // Tenter de récupérer depuis le localStorage
+    const localBackup = localStorage.getItem('theos_offline_data');
+    if(localBackup) {
+        try {
+            const parsed = JSON.parse(localBackup);
+            if(parsed.user === u && parsed.data && (parsed.data.revenus?.length || parsed.data.depenses?.length || parsed.data.abonnements?.length || parsed.data.epargne?.length)) {
+                data = parsed.data;
+                if(parsed.settings) settings = {...settings, ...parsed.settings};
+                dataLoaded = true;
+                console.info('[LOGIN] Données restaurées depuis le cache local');
+                toast('Données restaurées depuis le cache local', 'success');
+                // Re-synchroniser vers le cloud
+                setTimeout(syncToCloud, 2000);
+            }
+        } catch(e) {}
+    }
+    
+    if(!dataLoaded) {
+        console.warn('[LOGIN] Aucune donnée trouvée — compte vierge');
+        toast('⚠️ Données cloud perdues — compte réinitialisé', 'error');
+    }
+}
+/* === FIN PATCH === */
+
+if(!data.revenus_rec)data.revenus_rec=[];
+if(!data.categories)data.categories={revenus:['Salaire','Freelance','YouTube','Autre'],depenses:['Alimentation','Transport','Logement','Loisirs','Shopping','Tech','Santé','Abonnements','Autre'],abonnements:['Streaming','Cloud','Software','Télécom','Autre'],epargne:['Livret A','PEA','Crypto','Autre']};
+if(!data.categories.depenses.includes('Abonnements')){data.categories.depenses.push('Abonnements')}
+settings={...settings,...userData.settings};localStorage.setItem('theos_session',JSON.stringify({u,h,p:btoa(p)}));toast('Connecté !');enterApp()}catch(err){console.error(err);setLoading(false);showErr('Erreur réseau')}}
+
+async function tryAutoLogin(){const s=localStorage.getItem('theos_session');if(!s)return false;try{const{u,h,p}=JSON.parse(s);currentUser=u;if(!isOnline){loadLocal();if(data.revenus||data.depenses){return true}return false}const userData=await kvGet('user_'+u);if(!userData||userData.pwdHash!==h)return false;if(p){encKey=await deriveKey(atob(p),u)}else{return false}userCreated=userData.created;
+
+/* === PATCH: Même protection au auto-login === */
+let dataLoaded = false;
+if(userData.encData){
+    const dec=await decrypt(userData.encData,encKey);
+    if(dec){
+        try {
+            data=JSON.parse(dec);
+            dataLoaded = true;
+        } catch(e) {
+            console.error('[AUTOLOGIN] JSON invalide');
+        }
+    }
+} else if(userData.data){
+    data=userData.data;
+    dataLoaded = true;
+}
+
+if(!dataLoaded) {
+    loadLocal();
+    if(data.revenus?.length || data.depenses?.length || data.abonnements?.length || data.epargne?.length) {
+        dataLoaded = true;
+        console.info('[AUTOLOGIN] Données restaurées depuis le cache local');
+        setTimeout(syncToCloud, 2000);
+    }
+}
+/* === FIN PATCH === */
+
+if(!data.revenus_rec)data.revenus_rec=[];
+if(!data.categories)data.categories={revenus:['Salaire','Freelance','YouTube','Autre'],depenses:['Alimentation','Transport','Logement','Loisirs','Shopping','Tech','Santé','Abonnements','Autre'],abonnements:['Streaming','Cloud','Software','Télécom','Autre'],epargne:['Livret A','PEA','Crypto','Autre']};
+if(!data.categories.depenses.includes('Abonnements')){data.categories.depenses.push('Abonnements')}
+settings={...settings,...userData.settings};return true}catch(e){console.error(e)}return false}
 
 function enterApp(){document.getElementById('authScreen').style.display='none';document.getElementById('app').classList.add('active');initApp()}
 function logout(){if(confirm('Déconnexion ?')){localStorage.removeItem('theos_session');localStorage.removeItem('theos_offline_data');location.reload()}}
 
-async function syncToCloud(){if(!isOnline||!encKey)return;try{const userData=await kvGet('user_'+currentUser);if(userData){userData.encData=await encrypt(JSON.stringify(data),encKey);userData.settings=settings;delete userData.data;await kvSet('user_'+currentUser,userData)}saveLocal()}catch(e){console.error(e);setSyncStatus('error')}}
+/* === PATCH: syncToCloud sécurisé — ne jamais écrire null === */
+async function syncToCloud(){
+    if(!isOnline||!encKey)return;
+    try{
+        // Vérifier que les données sont valides avant de sync
+        const dataStr = JSON.stringify(data);
+        if(!dataStr || dataStr === '{}' || dataStr === 'null') {
+            console.error('[SYNC] Abandon — données vides ou nulles');
+            setSyncStatus('error');
+            return;
+        }
+        
+        const encData = await encrypt(dataStr, encKey);
+        if(!encData) {
+            console.error('[SYNC] Abandon — chiffrement échoué');
+            setSyncStatus('error');
+            return;
+        }
+        
+        const userData=await kvGet('user_'+currentUser);
+        if(userData){
+            userData.encData = encData;
+            userData.settings=settings;
+            delete userData.data;
+            await kvSet('user_'+currentUser,userData);
+        }
+        saveLocal();
+    }catch(e){
+        console.error('[SYNC] Erreur:', e);
+        setSyncStatus('error');
+    }
+}
+/* === FIN PATCH === */
+
 let syncTimeout=null;
 function scheduleSync(){
-    // SAUVEGARDER IMMÉDIATEMENT EN LOCAL (backup de sécurité)
     saveLocal();
-    
-    // Puis planifier le cloud sync avec debounce
     if(syncTimeout)clearTimeout(syncTimeout);
     syncTimeout=setTimeout(syncToCloud,1500);
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{applyTheme();updateOnlineStatus();setLoading(true);if(await tryAutoLogin()){enterApp()}else{setLoading(false)}});
 
-// Forcer la sauvegarde avant de quitter la page
-window.addEventListener('beforeunload', (e) => {
-    if(syncTimeout) {
-        clearTimeout(syncTimeout);
-        saveLocal(); // Garantir la sauvegarde locale
-        // Tentative de sync cloud (peut être interrompue par le navigateur)
-        if(navigator.sendBeacon && encKey && currentUser) {
-            const userData = {
-                encData: null,
-                settings: settings
-            };
-            // Note: encrypt est async, donc on fait de notre mieux avec sendBeacon
-            // La sauvegarde locale est le filet de sécurité principal
-            navigator.sendBeacon(API('user_'+currentUser), JSON.stringify(userData));
+/* === PATCH: beforeunload — sauvegarde locale UNIQUEMENT, plus de sendBeacon destructeur === */
+window.addEventListener('beforeunload', () => {
+    if(currentUser) {
+        saveLocal(); // Sauvegarde locale fiable
+        // On force le sync cloud si un sync était en attente
+        if(syncTimeout) {
+            clearTimeout(syncTimeout);
+            // Note: on ne fait PAS de sendBeacon car il ne peut pas chiffrer (async)
+            // Le localStorage servira de backup au prochain login
         }
     }
 });
+/* === FIN PATCH === */
 
 function initApp(){applyTheme();initNav();initPeriod();refresh();renderSettings();updateDate();renderCalendar();document.getElementById('userName').textContent=currentUser}
 function refresh(){renderAll();updateDashboard();scheduleSync()}
@@ -484,7 +590,7 @@ function tog(k,v){settings[k]=v;applyTheme();scheduleSync();refresh()}
 
 function openPwdModal(){document.getElementById('modalT').textContent='Changer mot de passe';document.getElementById('modalB').innerHTML=`<div class="form-group"><label>Mot de passe actuel</label><input type="password" id="pwdOld" required></div><div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="pwdNew" required minlength="6"></div><div class="form-group"><label>Confirmer</label><input type="password" id="pwdConf" required></div>`;document.getElementById('modalFoot').style.display='flex';document.getElementById('modalF').onsubmit=changePwd;document.getElementById('modalO').classList.add('active')}
 async function changePwd(e){e.preventDefault();const userData=await kvGet('user_'+currentUser);const old=await sha256(document.getElementById('pwdOld').value);if(old!==userData.pwdHash){toast('Mot de passe incorrect','error');return}const n=document.getElementById('pwdNew').value,c=document.getElementById('pwdConf').value;if(n!==c){toast('Ne correspondent pas','error');return}if(n.length<6){toast('Trop court','error');return}const h=await sha256(n);encKey=await deriveKey(n,currentUser);userData.pwdHash=h;userData.encData=await encrypt(JSON.stringify(data),encKey);delete userData.data;await kvSet('user_'+currentUser,userData);localStorage.setItem('theos_session',JSON.stringify({u:currentUser,h,p:btoa(n)}));closeModal();toast('Mot de passe changé !')}
-async function clearData(){if(confirm('Effacer toutes les données ?')){data={revenus:[],depenses:[],abonnements:[],epargne:[],categories:data.categories};await syncToCloud();refresh();renderCalendar();toast('Données effacées')}}
+async function clearData(){if(confirm('Effacer toutes les données ?')){data={revenus:[],depenses:[],abonnements:[],epargne:[],revenus_rec:[],categories:data.categories};await syncToCloud();refresh();renderCalendar();toast('Données effacées')}}
 async function delAccount(){if(confirm('SUPPRIMER le compte ?')&&prompt('Tapez SUPPRIMER')==='SUPPRIMER'){await kvDel('user_'+currentUser);localStorage.removeItem('theos_session');localStorage.removeItem('theos_offline_data');toast('Compte supprimé');setTimeout(()=>location.reload(),1000)}}
 function renderTags(){['revenus','depenses','abonnements'].forEach(t=>{const m={revenus:'Rev',depenses:'Dep',abonnements:'Abo'},c=document.getElementById('t'+m[t]);if(c&&data.categories&&data.categories[t])c.innerHTML=data.categories[t].map(x=>`<span class="tag">${x}<button class="tag-remove" onclick="remCat('${t}','${x}')">×</button></span>`).join('')})}
 function addCat(t){const m={revenus:'Rev',depenses:'Dep',abonnements:'Abo'},i=document.getElementById('n'+m[t]),v=i.value.trim();if(v&&!data.categories[t].includes(v)){data.categories[t].push(v);scheduleSync();renderTags();updateFilters();i.value=''}}
@@ -504,7 +610,6 @@ function getAboDepensesForPeriod(p){const abos=data.abonnements||[];let total=0;
 function getRevRecForPeriod(p){let t=0;(data.revenus_rec||[]).forEach(r=>{if(r.frequence==='annuel'){const d=new Date(r.datePerception);if(p.type==='all')t+=r.montant;else if(p.type==='year'&&d.getFullYear()===p.year)t+=r.montant;else if(p.type==='month'&&d.getMonth()===p.month&&d.getFullYear()===p.year)t+=r.montant}else{if(p.type==='all')t+=r.montant*12;else if(p.type==='year')t+=r.montant*12;else t+=r.montant}});return t}
 
 function updateDashboard(){const t=document.getElementById('periodType').value;document.getElementById('periodMonth').style.display=t==='month'?'':'none';document.getElementById('periodYear').style.display=t==='all'?'none':'';const p=getPeriod();const fR=filterP(data.revenus||[],p);const fD=filterP(data.depenses||[],p);const revRecT=getRevRecForPeriod(p);const tR=fR.reduce((s,x)=>s+x.montant,0)+revRecT;const tDBase=fD.reduce((s,x)=>s+x.montant,0);const aboDepenses=getAboDepensesForPeriod(p);const tD=tDBase+aboDepenses;const net=tR-tD;
-// Calcul abonnements selon période
 let aboDisplay,aboLabel;
 if(p.type==='month'){aboDisplay=(data.abonnements||[]).reduce((s,x)=>s+(x.frequence==='annuel'?x.montant/12:x.montant),0);aboLabel='/mois'}
 else if(p.type==='year'){aboDisplay=(data.abonnements||[]).reduce((s,x)=>s+(x.frequence==='annuel'?x.montant:x.montant*12),0);aboLabel='/an'}
@@ -630,10 +735,8 @@ function submitForm(e){
         if(isRec){
             delete entry.date;
             if(editId){
-                // Si existait en revenu normal, le supprimer
                 const iNormal=data.revenus.findIndex(x=>x.id===editId);
                 if(iNormal>=0)data.revenus.splice(iNormal,1);
-                // Chercher en rec
                 const iRec=data.revenus_rec.findIndex(x=>x.id===editId);
                 if(iRec>=0){data.revenus_rec[iRec]={...data.revenus_rec[iRec],...entry}}
                 else{entry.id=editId;data.revenus_rec.push(entry)}
@@ -641,10 +744,8 @@ function submitForm(e){
         }else{
             delete entry.frequence;delete entry.datePerception;
             if(editId){
-                // Si existait en rec, le supprimer
                 const iRec=data.revenus_rec.findIndex(x=>x.id===editId);
                 if(iRec>=0)data.revenus_rec.splice(iRec,1);
-                // Chercher en normal
                 const iNormal=data.revenus.findIndex(x=>x.id===editId);
                 if(iNormal>=0){data.revenus[iNormal]={...data.revenus[iNormal],...entry}}
                 else{entry.id=editId;data.revenus.push(entry)}
@@ -677,7 +778,7 @@ function expJSON(){const b=new Blob([JSON.stringify({data,settings},null,2)],{ty
 function expXLS(){const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((data.revenus||[]).map(r=>({Description:r.description,Montant:r.montant,Date:r.date,Catégorie:r.categorie}))),'Revenus');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((data.depenses||[]).map(d=>({Description:d.description,Montant:d.montant,Date:d.date,Catégorie:d.categorie}))),'Dépenses');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((data.abonnements||[]).map(a=>({Description:a.description,Montant:a.montant,Fréquence:a.frequence,DatePrelevement:a.datePrelevement,Catégorie:a.categorie}))),'Abonnements');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet((data.epargne||[]).map(e=>({Nom:e.nom,Type:e.type,Solde:e.solde,Objectif:e.objectif||''}))),'Épargne');XLSX.writeFile(wb,'theos-'+new Date().toISOString().split('T')[0]+'.xlsx');toast('Excel exporté')}
 
 if('serviceWorker' in navigator){
-    const sw=`const CACHE='theos-v2';self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>Promise.all(['https://cdn.jsdelivr.net/npm/chart.js','https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js'].map(u=>fetch(u).then(r=>c.put(u,r)).catch(()=>{})))).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{if(r.status===200){const cl=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cl))}return r}).catch(()=>caches.match(e.request)))});`;
+    const sw=`const CACHE='theos-v3';self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>Promise.all(['https://cdn.jsdelivr.net/npm/chart.js','https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js'].map(u=>fetch(u).then(r=>c.put(u,r)).catch(()=>{})))).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{if(r.status===200){const cl=r.clone();caches.open(CACHE).then(c=>c.put(e.request,cl))}return r}).catch(()=>caches.match(e.request)))});`;
     navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
 }
 </script>
