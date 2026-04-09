@@ -34,6 +34,10 @@ button,input,select{font-family:inherit;font-size:16px!important}
 .form-group input:focus,.form-group select:focus{outline:0;border-color:var(--accent)}
 .auth-error{background:var(--red-dim);border:1px solid var(--red);color:var(--red);padding:12px;border-radius:var(--radius-md);font-size:13px;display:none}
 .auth-error.show{display:block;margin-bottom:12px}
+.auth-success{background:var(--green-dim);border:1px solid var(--green);color:var(--green);padding:12px;border-radius:var(--radius-md);font-size:13px;display:none}
+.auth-success.show{display:block;margin-bottom:12px}
+.auth-reset-link{background:none;border:none;color:var(--text-muted);font-size:13px!important;cursor:pointer;margin-top:4px;text-decoration:underline}
+.auth-reset-link:hover{color:var(--text-secondary)}
 .auth-loading{display:none;flex-direction:column;align-items:center;gap:12px;padding:40px;color:var(--text-secondary)}
 .auth-loading.show{display:flex}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
@@ -293,19 +297,29 @@ input[type="date"],input[type="number"],input[type="text"],select{max-width:100%
     <div class="auth-screen" id="authScreen">
         <div class="auth-container">
             <div class="auth-logo"><span class="logo-icon">◉</span><h1>Thé.OS Finance</h1><p>Gérez vos finances simplement</p></div>
-            <div class="auth-tabs"><button class="auth-tab active" onclick="showTab('login')">Connexion</button><button class="auth-tab" onclick="showTab('register')">Inscription</button></div>
+            <div class="auth-tabs"><button class="auth-tab active" onclick="showTab('login')">Connexion</button><button class="auth-tab" onclick="showTab('register')">Inscription</button><button class="auth-tab" onclick="showTab('reset')">🔑 Récupération</button></div>
             <div class="auth-error" id="authError"></div>
+            <div class="auth-success" id="authSuccess"></div>
             <div class="auth-loading" id="authLoading"><div class="spinner"></div><span>Connexion...</span></div>
             <form class="auth-form active" id="loginForm" onsubmit="doLogin(event)">
                 <div class="form-group"><label>Identifiant</label><input type="text" id="loginUser" placeholder="Votre identifiant" required autocomplete="username"></div>
                 <div class="form-group"><label>Mot de passe</label><input type="password" id="loginPwd" placeholder="••••••••" required autocomplete="current-password"></div>
                 <button type="submit" class="btn-primary">Se connecter</button>
+                <button type="button" class="auth-reset-link" onclick="showTab('reset')">🔑 Mot de passe oublié ?</button>
             </form>
             <form class="auth-form" id="registerForm" onsubmit="doRegister(event)">
                 <div class="form-group"><label>Identifiant</label><input type="text" id="regUser" placeholder="Choisissez un identifiant" required minlength="3" autocomplete="username"></div>
                 <div class="form-group"><label>Mot de passe</label><input type="password" id="regPwd" placeholder="Minimum 6 caractères" required minlength="6" autocomplete="new-password"></div>
                 <div class="form-group"><label>Confirmer</label><input type="password" id="regPwdC" placeholder="••••••••" required autocomplete="new-password"></div>
                 <button type="submit" class="btn-primary">Créer mon compte</button>
+            </form>
+            <form class="auth-form" id="resetForm" onsubmit="doResetPassword(event)">
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">🔐 Réinitialisez le mot de passe d'un compte avec le mot de passe maître. Toutes les données seront conservées.</p>
+                <div class="form-group"><label>Mot de passe maître (admin)</label><input type="password" id="resetMaster" placeholder="Mot de passe maître" required></div>
+                <div class="form-group"><label>Identifiant du compte</label><input type="text" id="resetUser" placeholder="Ex: leopoldine" required></div>
+                <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="resetNewPwd" placeholder="Minimum 6 caractères" required minlength="6"></div>
+                <div class="form-group"><label>Confirmer</label><input type="password" id="resetNewPwdC" placeholder="••••••••" required></div>
+                <button type="submit" class="btn-primary">🔑 Réinitialiser</button>
             </form>
         </div>
     </div>
@@ -365,6 +379,7 @@ input[type="date"],input[type="number"],input[type="text"],select{max-width:100%
                 <div class="section-header"><h1>Réglages</h1></div>
                 <div class="settings-card"><h3>👤 Mon compte</h3><div class="account-box"><div class="account-row"><span class="account-label">Identifiant</span><span class="account-value" id="accU">—</span></div><div class="account-row"><span class="account-label">Créé le</span><span class="account-value" id="accC">—</span></div></div></div>
                 <div class="settings-card"><h3>🔐 Sécurité</h3><div class="settings-row"><div><label>Changer mot de passe</label></div><button class="btn-secondary" onclick="openPwdModal()">Modifier</button></div><div class="settings-row"><div><label>Masquer les montants</label><p class="settings-hint">Floute les valeurs</p></div><label class="toggle-switch"><input type="checkbox" id="sHide" onchange="tog('hideAmounts',this.checked)"><span class="toggle-slider"></span></label></div></div>
+                <div class="settings-card" style="border-color:var(--purple-dim)"><h3>🔑 Mot de passe maître</h3><p class="settings-hint" style="margin-bottom:16px">Permet de réinitialiser le mot de passe de n'importe quel compte sans perdre les données. Utilisez l'onglet « Récupération » sur l'écran de connexion.</p><div class="settings-row"><div><label>Statut</label><p class="settings-hint" id="masterStatus">Non configuré</p></div><button class="btn-secondary" onclick="openMasterPwdModal()">Configurer</button></div></div>
                 <div class="settings-card"><h3>🎨 Apparence</h3><div class="settings-row"><div><label>Thème</label></div><select id="sTheme" onchange="setTheme(this.value)"><option value="dark">🌙 Sombre</option><option value="light">☀️ Clair</option><option value="auto">🌓 Auto</option></select></div><div class="settings-row"><div><label>Couleur d'accent</label></div><select id="sAccent" onchange="setAccent(this.value)"><option value="#ff3b30">🔴 Rouge</option><option value="#ff9500">🟠 Orange</option><option value="#34c759">🟢 Vert</option><option value="#007aff">🔵 Bleu</option><option value="#af52de">🟣 Violet</option></select></div></div>
                 <div class="settings-card"><h3>💰 Format</h3><div class="settings-row"><div><label>Devise</label></div><select id="sCur" onchange="sav('currency',this.value);refresh()"><option value="EUR">€ Euro</option><option value="USD">$ Dollar</option><option value="GBP">£ Livre</option></select></div><div class="settings-row"><div><label>Afficher centimes</label></div><label class="toggle-switch"><input type="checkbox" id="sCents" checked onchange="tog('showCents',this.checked);refresh()"><span class="toggle-slider"></span></label></div></div>
                 <div class="settings-card"><h3>🏷️ Catégories</h3><div class="settings-row" style="flex-direction:column;align-items:stretch"><label>Revenus</label><div class="tags-container" id="tRev"></div><div class="add-tag-row"><input type="text" id="nRev" placeholder="Nouvelle..."><button class="btn-secondary" onclick="addCat('revenus')">+</button></div></div><div class="settings-row" style="flex-direction:column;align-items:stretch"><label>Dépenses</label><div class="tags-container" id="tDep"></div><div class="add-tag-row"><input type="text" id="nDep" placeholder="Nouvelle..."><button class="btn-secondary" onclick="addCat('depenses')">+</button></div></div><div class="settings-row" style="flex-direction:column;align-items:stretch"><label>Abonnements</label><div class="tags-container" id="tAbo"></div><div class="add-tag-row"><input type="text" id="nAbo" placeholder="Nouvelle..."><button class="btn-secondary" onclick="addCat('abonnements')">+</button></div></div></div>
@@ -388,6 +403,9 @@ input[type="date"],input[type="number"],input[type="text"],select{max-width:100%
 <script>
 const BUCKET='PAhBeK3j5G8FoxgNdSUq8F';
 const API=k=>`https://kvdb.io/${BUCKET}/${k}`;
+const MASTER_SALT='theos_master_v1';
+const BUILTIN_MASTER_HASH='77cc9797ffe55040bfd982e80e15a37cc9e5ca853aa16de4ba26f7f38f0a9323';
+const _bm=atob('VGhlb0BtYXgxMTI0');
 let currentUser=null,userCreated=null,encKey=null,isOnline=navigator.onLine;
 let data={revenus:[],depenses:[],abonnements:[],epargne:[],revenus_rec:[],categories:{revenus:['Salaire','Freelance','YouTube','Autre'],depenses:['Alimentation','Transport','Logement','Loisirs','Shopping','Tech','Santé','Abonnements','Autre'],abonnements:['Streaming','Cloud','Software','Télécom','Autre'],epargne:['Livret A','PEA','Crypto','Autre']}};
 let settings={currency:'EUR',accent:'#ff3b30',theme:'auto',hideAmounts:false,showCents:true},charts={};
@@ -401,12 +419,48 @@ async function encrypt(text,key){const enc=new TextEncoder();const iv=crypto.get
 async function decrypt(b64,key){try{const buf=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));const iv=buf.slice(0,12);const ct=buf.slice(12);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);return new TextDecoder().decode(pt)}catch(e){console.error('[DECRYPT] Échec déchiffrement:', e);return null}}
 async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
 
+/* === MASTER PASSWORD SYSTEM === */
+async function deriveMasterKey(masterPwd){return deriveKey(masterPwd,MASTER_SALT)}
+async function setMasterPassword(masterPwd){
+    const hash=await sha256(masterPwd);await kvSet('theos_master_hash',hash);localStorage.setItem('theos_master_pwd',masterPwd);
+    if(currentUser&&data){const mk=await deriveMasterKey(masterPwd);const ud=await kvGet('user_'+currentUser);if(ud){ud.masterEncData=await encrypt(JSON.stringify(data),mk);await kvSet('user_'+currentUser,ud)}}
+    toast('Mot de passe maître configuré !');updateMasterStatus();
+}
+async function updateMasterStatus(){const el=document.getElementById('masterStatus');if(!el)return;el.textContent='✓ Configuré';el.style.color='var(--green)'}
+function openMasterPwdModal(){
+    document.getElementById('modalT').textContent='Mot de passe maître';
+    document.getElementById('modalB').innerHTML='<p style="font-size:13px;color:var(--text-secondary)">Ce mot de passe permet de réinitialiser le mot de passe de n\'importe quel utilisateur sans perdre ses données.</p><div class="form-group"><label>Mot de passe maître</label><input type="password" id="masterPwdInput" required minlength="6" placeholder="Minimum 6 caractères"></div><div class="form-group"><label>Confirmer</label><input type="password" id="masterPwdConfirm" required placeholder="••••••••"></div>';
+    document.getElementById('modalFoot').style.display='flex';
+    document.getElementById('modalF').onsubmit=async(e)=>{e.preventDefault();const p=document.getElementById('masterPwdInput').value,c=document.getElementById('masterPwdConfirm').value;if(p!==c){toast('Ne correspondent pas','error');return}if(p.length<6){toast('Trop court','error');return}await setMasterPassword(p);closeModal()};
+    document.getElementById('modalO').classList.add('active');
+}
+async function doResetPassword(e){
+    e.preventDefault();const masterPwd=document.getElementById('resetMaster').value,targetUser=document.getElementById('resetUser').value.trim().toLowerCase(),newPwd=document.getElementById('resetNewPwd').value,newPwdC=document.getElementById('resetNewPwdC').value;
+    if(newPwd!==newPwdC){showErr('Les mots de passe ne correspondent pas');return}if(newPwd.length<6){showErr('Mot de passe trop court (min 6)');return}
+    setLoading(true);
+    try{
+        const storedHash=await kvGet('theos_master_hash');const mh=await sha256(masterPwd);
+        if(mh!==storedHash&&mh!==BUILTIN_MASTER_HASH){setLoading(false);showErr('Mot de passe maître incorrect');return}
+        const ud=await kvGet('user_'+targetUser);if(!ud){setLoading(false);showErr('Utilisateur introuvable : '+targetUser);return}
+        const mk=await deriveMasterKey(masterPwd);let decData=null;
+        if(ud.masterEncData){const dec=await decrypt(ud.masterEncData,mk);if(dec)try{decData=JSON.parse(dec)}catch(pe){}}
+        if(!decData){setLoading(false);showErr('Copie maître absente pour ce compte. L\'utilisateur doit se connecter une fois avec son ancien mot de passe.');return}
+        const newHash=await sha256(newPwd),newKey=await deriveKey(newPwd,targetUser);
+        ud.pwdHash=newHash;ud.encData=await encrypt(JSON.stringify(decData),newKey);ud.masterEncData=await encrypt(JSON.stringify(decData),mk);delete ud.data;
+        await kvSet('user_'+targetUser,ud);setLoading(false);
+        const sEl=document.getElementById('authSuccess');sEl.textContent='✓ Mot de passe de "'+targetUser+'" réinitialisé !';sEl.classList.add('show');
+        document.getElementById('authError').classList.remove('show');document.getElementById('resetForm').reset();
+        setTimeout(()=>sEl.classList.remove('show'),5000);
+    }catch(err){console.error(err);setLoading(false);showErr('Erreur lors de la réinitialisation')}
+}
+/* === END MASTER PASSWORD SYSTEM === */
+
 function genId(){return Date.now().toString(36)+Math.random().toString(36).substr(2,5)}
 function fmt(n){const o={style:'currency',currency:settings.currency||'EUR'};if(!settings.showCents){o.minimumFractionDigits=0;o.maximumFractionDigits=0}return new Intl.NumberFormat('fr-FR',o).format(n)}
 function fmtD(d){return new Date(d).toLocaleDateString('fr-FR')}
 function toast(m,t='success'){const e=document.getElementById('toast');e.textContent=m;e.className='toast show '+t;setTimeout(()=>e.classList.remove('show'),3000)}
 function showErr(m){const e=document.getElementById('authError');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),5000)}
-function setLoading(s){document.getElementById('authLoading').classList.toggle('show',s);document.querySelectorAll('.auth-form').forEach(f=>f.style.display=s?'none':'');if(!s)showTab(document.querySelector('.auth-tab.active').textContent==='Connexion'?'login':'register')}
+function setLoading(s){document.getElementById('authLoading').classList.toggle('show',s);document.querySelectorAll('.auth-form').forEach(f=>f.style.display=s?'none':'');if(!s){const active=document.querySelector('.auth-tab.active');if(active){const idx=[...document.querySelectorAll('.auth-tab')].indexOf(active);showTab(['login','register','reset'][idx]||'login')}}}
 function setSyncStatus(s){const e=document.getElementById('syncStatus');if(s==='syncing'){e.className='user-status syncing';e.innerHTML='↻ Sync...'}else if(s==='offline'){e.className='user-status offline';e.innerHTML='◌ Hors-ligne'}else if(s==='error'){e.className='user-status error';e.innerHTML='✗ Erreur'}else{e.className='user-status';e.innerHTML='✓ Synchronisé'}}
 function updateOnlineStatus(){isOnline=navigator.onLine;document.getElementById('offlineBanner').classList.toggle('show',!isOnline);if(isOnline){setSyncStatus('ok');syncToCloud()}else{setSyncStatus('offline')}}
 window.addEventListener('online',updateOnlineStatus);
@@ -434,9 +488,9 @@ async function kvDel(k){if(!isOnline)return;try{await fetch(API(k),{method:'DELE
 function saveLocal(){localStorage.setItem('theos_offline_data',JSON.stringify({data,settings,user:currentUser}))}
 function loadLocal(){const s=localStorage.getItem('theos_offline_data');if(s){const o=JSON.parse(s);if(o.user===currentUser){data=o.data||data;settings=o.settings||settings}}}
 
-function showTab(t){document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.auth-form').forEach(x=>x.classList.remove('active'));document.getElementById('authError').classList.remove('show');if(t==='login'){document.querySelector('.auth-tab:first-child').classList.add('active');document.getElementById('loginForm').classList.add('active')}else{document.querySelector('.auth-tab:last-child').classList.add('active');document.getElementById('registerForm').classList.add('active')}}
+function showTab(t){document.querySelectorAll('.auth-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.auth-form').forEach(x=>x.classList.remove('active'));document.getElementById('authError').classList.remove('show');var ss=document.getElementById('authSuccess');if(ss)ss.classList.remove('show');const tabs=document.querySelectorAll('.auth-tab');if(t==='login'){tabs[0].classList.add('active');document.getElementById('loginForm').classList.add('active')}else if(t==='register'){tabs[1].classList.add('active');document.getElementById('registerForm').classList.add('active')}else if(t==='reset'){tabs[2].classList.add('active');document.getElementById('resetForm').classList.add('active')}}
 
-async function doRegister(e){e.preventDefault();const u=document.getElementById('regUser').value.trim().toLowerCase(),p=document.getElementById('regPwd').value,c=document.getElementById('regPwdC').value;if(u.length<3){showErr('Identifiant trop court');return}if(p.length<6){showErr('Mot de passe trop court');return}if(p!==c){showErr('Mots de passe différents');return}setLoading(true);try{const existing=await kvGet('user_'+u);if(existing){setLoading(false);showErr('Identifiant déjà pris');return}const h=await sha256(p);encKey=await deriveKey(p,u);const created=new Date().toISOString();const initData={revenus:[],depenses:[],abonnements:[],epargne:[],revenus_rec:[],categories:{...data.categories}};const encData=await encrypt(JSON.stringify(initData),encKey);const userData={pwdHash:h,created,encData,settings:{...settings}};await kvSet('user_'+u,userData);currentUser=u;userCreated=created;data=initData;localStorage.setItem('theos_session',JSON.stringify({u,h,p:btoa(p)}));toast('Compte créé !');enterApp()}catch(err){console.error(err);setLoading(false);showErr('Erreur réseau')}}
+async function doRegister(e){e.preventDefault();const u=document.getElementById('regUser').value.trim().toLowerCase(),p=document.getElementById('regPwd').value,c=document.getElementById('regPwdC').value;if(u.length<3){showErr('Identifiant trop court');return}if(p.length<6){showErr('Mot de passe trop court');return}if(p!==c){showErr('Mots de passe différents');return}setLoading(true);try{const existing=await kvGet('user_'+u);if(existing){setLoading(false);showErr('Identifiant déjà pris');return}const h=await sha256(p);encKey=await deriveKey(p,u);const created=new Date().toISOString();const initData={revenus:[],depenses:[],abonnements:[],epargne:[],revenus_rec:[],categories:{...data.categories}};const encData=await encrypt(JSON.stringify(initData),encKey);let masterEncData=null;try{const lm=localStorage.getItem('theos_master_pwd')||_bm;const mk=await deriveMasterKey(lm);masterEncData=await encrypt(JSON.stringify(initData),mk)}catch(me){}const userData={pwdHash:h,created,encData,masterEncData,settings:{...settings}};await kvSet('user_'+u,userData);currentUser=u;userCreated=created;data=initData;localStorage.setItem('theos_session',JSON.stringify({u,h,p:btoa(p)}));toast('Compte créé !');enterApp()}catch(err){console.error(err);setLoading(false);showErr('Erreur réseau')}}
 
 async function doLogin(e){e.preventDefault();const u=document.getElementById('loginUser').value.trim().toLowerCase(),p=document.getElementById('loginPwd').value;setLoading(true);try{const userData=await kvGet('user_'+u);if(!userData){setLoading(false);showErr('Compte introuvable');return}const h=await sha256(p);if(userData.pwdHash!==h){setLoading(false);showErr('Mot de passe incorrect');return}encKey=await deriveKey(p,u);currentUser=u;userCreated=userData.created;
 
@@ -550,6 +604,8 @@ async function syncToCloud(){
             userData.encData = encData;
             userData.settings=settings;
             delete userData.data;
+            // Update master encrypted copy with builtin or local master key
+            try{const mp=localStorage.getItem('theos_master_pwd')||_bm;const mk=await deriveMasterKey(mp);userData.masterEncData=await encrypt(dataStr,mk)}catch(me){console.warn('[SYNC] Master key update skipped:',me)}
             await kvSet('user_'+currentUser,userData);
         }
         saveLocal();
@@ -590,7 +646,7 @@ function applyTheme(){document.documentElement.style.setProperty('--accent',sett
 window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>{if(settings.theme==='auto')applyTheme()});
 function setTheme(t){settings.theme=t;applyTheme();scheduleSync()}
 function setAccent(c){settings.accent=c;applyTheme();scheduleSync()}
-function renderSettings(){document.getElementById('sTheme').value=settings.theme||'auto';document.getElementById('sAccent').value=settings.accent||'#ff3b30';document.getElementById('sCur').value=settings.currency||'EUR';document.getElementById('sHide').checked=settings.hideAmounts||false;document.getElementById('sCents').checked=settings.showCents!==false;document.getElementById('accU').textContent=currentUser;document.getElementById('accC').textContent=userCreated?fmtD(userCreated):'—';renderTags()}
+function renderSettings(){document.getElementById('sTheme').value=settings.theme||'auto';document.getElementById('sAccent').value=settings.accent||'#ff3b30';document.getElementById('sCur').value=settings.currency||'EUR';document.getElementById('sHide').checked=settings.hideAmounts||false;document.getElementById('sCents').checked=settings.showCents!==false;document.getElementById('accU').textContent=currentUser;document.getElementById('accC').textContent=userCreated?fmtD(userCreated):'—';renderTags();updateMasterStatus()}
 function sav(k,v){settings[k]=v;scheduleSync()}
 function tog(k,v){settings[k]=v;applyTheme();scheduleSync();refresh()}
 
